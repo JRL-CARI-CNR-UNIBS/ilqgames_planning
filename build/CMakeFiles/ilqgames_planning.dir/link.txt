@@ -1,0 +1,2 @@
+/usr/bin/ar qc libilqgames_planning.a CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o
+/usr/bin/ranlib libilqgames_planning.a

@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova1.cpp
+
+/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova2.cpp
+

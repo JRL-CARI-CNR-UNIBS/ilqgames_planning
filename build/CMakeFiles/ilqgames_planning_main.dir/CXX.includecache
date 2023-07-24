@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/ilqgames_planning/prova_header.h
+
+/home/abel/Documents/HRI_PhD/ilqgames_planning/src/main.cpp
+math.h
+-
+vector
+-
+iostream
+-
+ilqgames_planning/prova_header.h
+-
+
