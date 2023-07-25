@@ -35,3 +35,8 @@ target_link_libraries(${PROJECT_NAME} ilqgames)
 
 # Include EXTERNAL headers from /usr/local/include
 target_include_directories(ilqgames INTERFACE ${CMAKE_INSTALL_PREFIX}/include/ilqgames ${EIGEN3_INCLUDE_DIR})
+
+
+# === COMPILER CONSTANTS === #
+# Logging directory
+add_definitions(-DILQGAMES_PLANNING_LOG_DIR="${CMAKE_SOURCE_DIR}/logs")

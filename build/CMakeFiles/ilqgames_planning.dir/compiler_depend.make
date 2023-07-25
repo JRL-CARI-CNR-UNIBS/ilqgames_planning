@@ -471,7 +471,9 @@ CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o: /
   /usr/local/include/ilqgames/ilqgames/dynamics/multi_player_flat_system.h \
   /usr/local/include/ilqgames/ilqgames/utils/solver_log.h \
   /usr/local/include/ilqgames/ilqgames/utils/uncopyable.h \
-  /usr/local/include/ilqgames/ilqgames/dynamics/concatenated_dynamical_system.h
+  /usr/local/include/ilqgames/ilqgames/dynamics/concatenated_dynamical_system.h \
+  /usr/local/include/ilqgames/ilqgames/cost/quadratic_cost.h \
+  /usr/local/include/ilqgames/ilqgames/cost/time_invariant_cost.h
 
 CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp \
   /usr/include/stdc-predef.h \
@@ -1253,6 +1255,8 @@ CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: /h
 
 /usr/include/c++/9/bits/basic_ios.h:
 
+/usr/local/include/ilqgames/ilqgames/cost/time_invariant_cost.h:
+
 /usr/include/c++/9/debug/debug.h:
 
 /usr/include/c++/9/bits/ptr_traits.h:
@@ -1594,6 +1598,8 @@ CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: /h
 /usr/include/wctype.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
+
+/usr/local/include/ilqgames/ilqgames/cost/quadratic_cost.h:
 
 /usr/include/c++/9/bits/vector.tcc:
 

@@ -407,4 +407,6 @@ CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o: \
  /usr/local/include/ilqgames/ilqgames/dynamics/multi_player_flat_system.h \
  /usr/local/include/ilqgames/ilqgames/utils/solver_log.h \
  /usr/local/include/ilqgames/ilqgames/utils/uncopyable.h \
- /usr/local/include/ilqgames/ilqgames/dynamics/concatenated_dynamical_system.h
+ /usr/local/include/ilqgames/ilqgames/dynamics/concatenated_dynamical_system.h \
+ /usr/local/include/ilqgames/ilqgames/cost/quadratic_cost.h \
+ /usr/local/include/ilqgames/ilqgames/cost/time_invariant_cost.h
