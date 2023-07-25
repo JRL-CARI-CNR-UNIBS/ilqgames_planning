@@ -1,7 +1,4 @@
-#include <math.h>
-#include <vector>
 #include <iostream>
-#include <ilqgames_planning/prova_header.h>
 
 #include <ilqgames/solver/ilq_solver.h>
 

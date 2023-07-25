@@ -26,7 +26,7 @@
 	"objects" : 
 	[
 		{
-			"jsonFile" : "codemodel-v2-b0f04ac5be6edca77f8a.json",
+			"jsonFile" : "codemodel-v2-60dc7169db50e70b45b1.json",
 			"kind" : "codemodel",
 			"version" : 
 			{
@@ -64,6 +64,16 @@
 	],
 	"reply" : 
 	{
+		"cache-v2" : 
+		{
+			"jsonFile" : "cache-v2-b2de3642ac94768dadcb.json",
+			"kind" : "cache",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 0
+			}
+		},
 		"client-vscode" : 
 		{
 			"query.json" : 
@@ -99,7 +109,7 @@
 						}
 					},
 					{
-						"jsonFile" : "codemodel-v2-b0f04ac5be6edca77f8a.json",
+						"jsonFile" : "codemodel-v2-60dc7169db50e70b45b1.json",
 						"kind" : "codemodel",
 						"version" : 
 						{
@@ -126,6 +136,26 @@
 						}
 					}
 				]
+			}
+		},
+		"cmakeFiles-v1" : 
+		{
+			"jsonFile" : "cmakeFiles-v1-fd1d237402cac950bf33.json",
+			"kind" : "cmakeFiles",
+			"version" : 
+			{
+				"major" : 1,
+				"minor" : 0
+			}
+		},
+		"codemodel-v2" : 
+		{
+			"jsonFile" : "codemodel-v2-60dc7169db50e70b45b1.json",
+			"kind" : "codemodel",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 5
 			}
 		}
 	}

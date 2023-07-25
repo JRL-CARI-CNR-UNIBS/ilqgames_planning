@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o"
-  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o.d"
-  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o"
-  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o.d"
+  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o"
+  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o.d"
+  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o"
+  "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o.d"
   "libilqgames_planning.a"
   "libilqgames_planning.pdb"
 )

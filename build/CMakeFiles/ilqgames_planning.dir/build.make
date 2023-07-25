@@ -69,44 +69,44 @@ include CMakeFiles/ilqgames_planning.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/ilqgames_planning.dir/flags.make
 
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o: CMakeFiles/ilqgames_planning.dir/flags.make
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o: /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova1.cpp
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o: CMakeFiles/ilqgames_planning.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o -MF CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o.d -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o -c /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova1.cpp
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o: CMakeFiles/ilqgames_planning.dir/flags.make
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o: /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o: CMakeFiles/ilqgames_planning.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o -MF CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o.d -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o -c /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp
 
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova1.cpp > CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.i
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp > CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.i
 
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova1.cpp -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.s
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.s
 
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o: CMakeFiles/ilqgames_planning.dir/flags.make
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o: /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova2.cpp
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o: CMakeFiles/ilqgames_planning.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o -MF CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o.d -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o -c /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova2.cpp
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: CMakeFiles/ilqgames_planning.dir/flags.make
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: CMakeFiles/ilqgames_planning.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o -MF CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o.d -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o -c /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp
 
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova2.cpp > CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.i
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp > CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.i
 
-CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/prova2.cpp -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.s
+CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp -o CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.s
 
 # Object files for target ilqgames_planning
 ilqgames_planning_OBJECTS = \
-"CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o" \
-"CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o"
+"CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o" \
+"CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o"
 
 # External object files for target ilqgames_planning
 ilqgames_planning_EXTERNAL_OBJECTS =
 
-libilqgames_planning.a: CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o
-libilqgames_planning.a: CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o
+libilqgames_planning.a: CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o
+libilqgames_planning.a: CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o
 libilqgames_planning.a: CMakeFiles/ilqgames_planning.dir/build.make
 libilqgames_planning.a: CMakeFiles/ilqgames_planning.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libilqgames_planning.a"

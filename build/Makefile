@@ -142,53 +142,53 @@ ilqgames_planning_main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning_main.dir/build.make CMakeFiles/ilqgames_planning_main.dir/build
 .PHONY : ilqgames_planning_main/fast
 
-src/ilqgames_planning/prova1.o: src/ilqgames_planning/prova1.cpp.o
-.PHONY : src/ilqgames_planning/prova1.o
+src/ilqgames_planning/hand_tcp_point3D.o: src/ilqgames_planning/hand_tcp_point3D.cpp.o
+.PHONY : src/ilqgames_planning/hand_tcp_point3D.o
 
 # target to build an object file
-src/ilqgames_planning/prova1.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.o
-.PHONY : src/ilqgames_planning/prova1.cpp.o
+src/ilqgames_planning/hand_tcp_point3D.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o
+.PHONY : src/ilqgames_planning/hand_tcp_point3D.cpp.o
 
-src/ilqgames_planning/prova1.i: src/ilqgames_planning/prova1.cpp.i
-.PHONY : src/ilqgames_planning/prova1.i
+src/ilqgames_planning/hand_tcp_point3D.i: src/ilqgames_planning/hand_tcp_point3D.cpp.i
+.PHONY : src/ilqgames_planning/hand_tcp_point3D.i
 
 # target to preprocess a source file
-src/ilqgames_planning/prova1.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.i
-.PHONY : src/ilqgames_planning/prova1.cpp.i
+src/ilqgames_planning/hand_tcp_point3D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.i
+.PHONY : src/ilqgames_planning/hand_tcp_point3D.cpp.i
 
-src/ilqgames_planning/prova1.s: src/ilqgames_planning/prova1.cpp.s
-.PHONY : src/ilqgames_planning/prova1.s
+src/ilqgames_planning/hand_tcp_point3D.s: src/ilqgames_planning/hand_tcp_point3D.cpp.s
+.PHONY : src/ilqgames_planning/hand_tcp_point3D.s
 
 # target to generate assembly for a file
-src/ilqgames_planning/prova1.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova1.cpp.s
-.PHONY : src/ilqgames_planning/prova1.cpp.s
+src/ilqgames_planning/hand_tcp_point3D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.s
+.PHONY : src/ilqgames_planning/hand_tcp_point3D.cpp.s
 
-src/ilqgames_planning/prova2.o: src/ilqgames_planning/prova2.cpp.o
-.PHONY : src/ilqgames_planning/prova2.o
+src/ilqgames_planning/point_player_3d.o: src/ilqgames_planning/point_player_3d.cpp.o
+.PHONY : src/ilqgames_planning/point_player_3d.o
 
 # target to build an object file
-src/ilqgames_planning/prova2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.o
-.PHONY : src/ilqgames_planning/prova2.cpp.o
+src/ilqgames_planning/point_player_3d.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o
+.PHONY : src/ilqgames_planning/point_player_3d.cpp.o
 
-src/ilqgames_planning/prova2.i: src/ilqgames_planning/prova2.cpp.i
-.PHONY : src/ilqgames_planning/prova2.i
+src/ilqgames_planning/point_player_3d.i: src/ilqgames_planning/point_player_3d.cpp.i
+.PHONY : src/ilqgames_planning/point_player_3d.i
 
 # target to preprocess a source file
-src/ilqgames_planning/prova2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.i
-.PHONY : src/ilqgames_planning/prova2.cpp.i
+src/ilqgames_planning/point_player_3d.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.i
+.PHONY : src/ilqgames_planning/point_player_3d.cpp.i
 
-src/ilqgames_planning/prova2.s: src/ilqgames_planning/prova2.cpp.s
-.PHONY : src/ilqgames_planning/prova2.s
+src/ilqgames_planning/point_player_3d.s: src/ilqgames_planning/point_player_3d.cpp.s
+.PHONY : src/ilqgames_planning/point_player_3d.s
 
 # target to generate assembly for a file
-src/ilqgames_planning/prova2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/prova2.cpp.s
-.PHONY : src/ilqgames_planning/prova2.cpp.s
+src/ilqgames_planning/point_player_3d.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ilqgames_planning.dir/build.make CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.s
+.PHONY : src/ilqgames_planning/point_player_3d.cpp.s
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
@@ -224,12 +224,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ilqgames_planning"
 	@echo "... ilqgames_planning_main"
-	@echo "... src/ilqgames_planning/prova1.o"
-	@echo "... src/ilqgames_planning/prova1.i"
-	@echo "... src/ilqgames_planning/prova1.s"
-	@echo "... src/ilqgames_planning/prova2.o"
-	@echo "... src/ilqgames_planning/prova2.i"
-	@echo "... src/ilqgames_planning/prova2.s"
+	@echo "... src/ilqgames_planning/hand_tcp_point3D.o"
+	@echo "... src/ilqgames_planning/hand_tcp_point3D.i"
+	@echo "... src/ilqgames_planning/hand_tcp_point3D.s"
+	@echo "... src/ilqgames_planning/point_player_3d.o"
+	@echo "... src/ilqgames_planning/point_player_3d.i"
+	@echo "... src/ilqgames_planning/point_player_3d.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
