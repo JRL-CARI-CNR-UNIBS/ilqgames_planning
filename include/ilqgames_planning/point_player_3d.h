@@ -64,20 +64,18 @@ inline void PointPlayer3D::Linearize(ilqgames::Time t,
                                      Eigen::Ref<Eigen::MatrixXf> A,
                                      Eigen::Ref<Eigen::MatrixXf> B) const {
 
+    ilqgames::Time dt = ilqgames::time::kTimeStep;
 
     A.block(0,0,kNumXDims,kNumXDims) << Eigen::MatrixXf::Identity(kNumXDims, kNumXDims);
     B.block(0,0,kNumXDims,kNumUDims) << Eigen::MatrixXf::Zero(kNumXDims, kNumUDims);
 
-    A(kPxIdx,kVxIdx) = 1;
-    A(kPyIdx,kVyIdx) = 1;
-    A(kPzIdx,kVzIdx) = 1;
+    A(kPxIdx,kVxIdx) += dt;
+    A(kPyIdx,kVyIdx) += dt;
+    A(kPzIdx,kVzIdx) += dt;
 
-    B(kVxIdx,kAxIdx) = 1;
-    B(kVyIdx,kAyIdx) = 1;
-    B(kVzIdx,kAzIdx) = 1;
-
-    A = A * ilqgames::time::kTimeStep;
-    B = B * ilqgames::time::kTimeStep;
+    B(kVxIdx,kAxIdx) = dt;
+    B(kVyIdx,kAyIdx) = dt;
+    B(kVzIdx,kAzIdx) = dt;
 }
 
 inline float PointPlayer3D::DistanceBetween(const Eigen::VectorXf& x0,

@@ -25,7 +25,7 @@ class HandTcpPoint3D : public ilqgames::TopDownRenderableProblem {
         std::vector<float> Vys(const Eigen::VectorXf& x) const;
         std::vector<float> Vzs(const Eigen::VectorXf& x) const;
 
-        std::vector<float> Thetas(const Eigen::VectorXf& x) const; // just to implement the pure virtual method from the parent class (not used!)
+        inline std::vector<float> Thetas(const Eigen::VectorXf& x) const { return {}; }; // just to implement the pure virtual method from the parent class (not used!)
 
 };  // class HandTcpPoint3D
 

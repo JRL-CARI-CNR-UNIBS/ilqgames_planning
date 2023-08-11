@@ -26,7 +26,7 @@ DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter.");
 
 int main(int argc, char **argv) {
     const std::string log_file =
-        ILQGAMES_PLANNING_LOG_DIR + std::string("/hand_tcp_point3D.log");
+        ILQGAMES_LOG_DIR + std::string("/hand_tcp_point3D.log");
     google::SetLogDestination(0, log_file.c_str());
     google::InitGoogleLogging(argv[0]);
     gflags::ParseCommandLineFlags(&argc, &argv, true);
