@@ -30,23 +30,28 @@ find_package(Eigen3 REQUIRED)
 find_package(Gflags REQUIRED)
 find_package(Glog REQUIRED)
 
-# Link EXTERNAL library libilqgames.a (static library in /usr/local/lib)
-add_library(ilqgames STATIC IMPORTED)
-set_target_properties(ilqgames PROPERTIES IMPORTED_LOCATION "${CMAKE_INSTALL_PREFIX}/lib/libilqgames.a")
-target_link_libraries(${PROJECT_NAME} ilqgames)
+set(CMAKE_INSTALL_LIBDIR lib)
 
-# Link EXTERNAL library libglog.a (static library in /usr/local/lib)
-target_link_libraries(${PROJECT_NAME} glog)
+include(${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/ilqgames/ilqgamesTargets.cmake)
+target_link_libraries(${PROJECT_NAME} ilqgamesTargets)
 
-# Link EXTERNAL library libgflags.a (static library in /usr/local/lib)
-target_link_libraries(${PROJECT_NAME} gflags)
+# # Link EXTERNAL library libilqgames.a (static library in /usr/local/lib)
+# add_library(ilqgames STATIC IMPORTED)
+# set_target_properties(ilqgames PROPERTIES IMPORTED_LOCATION "${CMAKE_INSTALL_PREFIX}/lib/libilqgames.a")
+# target_link_libraries(${PROJECT_NAME} ilqgames)
 
-# Include EXTERNAL headers from /usr/local/include
-target_include_directories(ilqgames INTERFACE
-                           ${CMAKE_INSTALL_PREFIX}/include/ilqgames
-                           ${CMAKE_INSTALL_PREFIX}/include/glog
-                           ${CMAKE_INSTALL_PREFIX}/include/gflags
-                           ${EIGEN3_INCLUDE_DIR})
+# # Link EXTERNAL library libglog.a (static library in /usr/local/lib)
+# target_link_libraries(${PROJECT_NAME} glog)
+
+# # Link EXTERNAL library libgflags.a (static library in /usr/local/lib)
+# target_link_libraries(${PROJECT_NAME} gflags)
+
+# # Include EXTERNAL headers from /usr/local/include
+# target_include_directories(ilqgames INTERFACE
+#                            ${CMAKE_INSTALL_PREFIX}/include/ilqgames
+#                            ${CMAKE_INSTALL_PREFIX}/include/glog
+#                            ${CMAKE_INSTALL_PREFIX}/include/gflags
+#                            ${EIGEN3_INCLUDE_DIR})
 
 
 # === COMPILER CONSTANTS === #
