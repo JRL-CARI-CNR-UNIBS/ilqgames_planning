@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ilqgames_planning_main.dir/src/main.cpp.o"
+  "CMakeFiles/ilqgames_planning_main.dir/src/main.cpp.o.d"
   "ilqgames_planning_main"
   "ilqgames_planning_main.pdb"
 )

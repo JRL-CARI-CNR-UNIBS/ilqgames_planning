@@ -2,14 +2,14 @@ CMakeFiles/ilqgames_planning_main.dir/src/main.cpp.o: \
  /home/abel/Documents/HRI_PhD/ilqgames_planning/src/main.cpp \
  /usr/include/stdc-predef.h \
  /home/abel/Documents/HRI_PhD/ilqgames_planning/include/ilqgames_planning/hand_tcp_point3D.h \
- /usr/local/include/ilqgames/ilqgames/solver/top_down_renderable_problem.h \
- /usr/local/include/ilqgames/ilqgames/solver/problem.h \
- /usr/local/include/ilqgames/ilqgames/cost/player_cost.h \
- /usr/local/include/ilqgames/ilqgames/constraint/constraint.h \
- /usr/local/include/ilqgames/ilqgames/cost/cost.h \
- /usr/local/include/ilqgames/ilqgames/utils/relative_time_tracker.h \
- /usr/local/include/ilqgames/ilqgames/utils/types.h \
- /usr/include/c++/9/math.h /usr/include/c++/9/cmath \
+ /usr/local/include/ilqgames/solver/top_down_renderable_problem.h \
+ /usr/local/include/ilqgames/solver/problem.h \
+ /usr/local/include/ilqgames/cost/player_cost.h \
+ /usr/local/include/ilqgames/constraint/constraint.h \
+ /usr/local/include/ilqgames/cost/cost.h \
+ /usr/local/include/ilqgames/utils/relative_time_tracker.h \
+ /usr/local/include/ilqgames/utils/types.h /usr/include/c++/9/math.h \
+ /usr/include/c++/9/cmath \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
@@ -396,22 +396,21 @@ CMakeFiles/ilqgames_planning_main.dir/src/main.cpp.o: \
  /usr/local/include/gflags/gflags_gflags.h /usr/include/c++/9/atomic \
  /usr/local/include/glog/log_severity.h \
  /usr/local/include/glog/vlog_is_on.h \
- /usr/local/include/ilqgames/ilqgames/utils/operating_point.h \
- /usr/local/include/ilqgames/ilqgames/utils/quadratic_cost_approximation.h \
- /usr/local/include/ilqgames/ilqgames/dynamics/multi_player_dynamical_system.h \
- /usr/local/include/ilqgames/ilqgames/dynamics/multi_player_integrable_system.h \
- /usr/local/include/ilqgames/ilqgames/utils/strategy.h \
- /usr/local/include/ilqgames/ilqgames/utils/linear_dynamics_approximation.h \
- /usr/local/include/ilqgames/ilqgames/dynamics/multi_player_flat_system.h \
- /usr/local/include/ilqgames/ilqgames/utils/solver_log.h \
- /usr/local/include/ilqgames/ilqgames/utils/uncopyable.h \
- /usr/local/include/ilqgames/ilqgames/solver/ilq_solver.h \
- /usr/local/include/ilqgames/ilqgames/solver/game_solver.h \
- /usr/local/include/ilqgames/ilqgames/solver/lq_feedback_solver.h \
- /usr/local/include/ilqgames/ilqgames/solver/lq_solver.h \
- /usr/local/include/ilqgames/ilqgames/solver/lq_open_loop_solver.h \
- /usr/local/include/ilqgames/ilqgames/solver/solver_params.h \
- /usr/local/include/ilqgames/ilqgames/utils/loop_timer.h \
- /usr/include/c++/9/list /usr/include/c++/9/bits/stl_list.h \
- /usr/include/c++/9/bits/list.tcc \
- /usr/local/include/ilqgames/ilqgames/solver/augmented_lagrangian_solver.h
+ /usr/local/include/ilqgames/utils/operating_point.h \
+ /usr/local/include/ilqgames/utils/quadratic_cost_approximation.h \
+ /usr/local/include/ilqgames/dynamics/multi_player_dynamical_system.h \
+ /usr/local/include/ilqgames/dynamics/multi_player_integrable_system.h \
+ /usr/local/include/ilqgames/utils/strategy.h \
+ /usr/local/include/ilqgames/utils/linear_dynamics_approximation.h \
+ /usr/local/include/ilqgames/dynamics/multi_player_flat_system.h \
+ /usr/local/include/ilqgames/utils/solver_log.h \
+ /usr/local/include/ilqgames/utils/uncopyable.h \
+ /usr/local/include/ilqgames/solver/ilq_solver.h \
+ /usr/local/include/ilqgames/solver/game_solver.h \
+ /usr/local/include/ilqgames/solver/lq_feedback_solver.h \
+ /usr/local/include/ilqgames/solver/lq_solver.h \
+ /usr/local/include/ilqgames/solver/lq_open_loop_solver.h \
+ /usr/local/include/ilqgames/solver/solver_params.h \
+ /usr/local/include/ilqgames/utils/loop_timer.h /usr/include/c++/9/list \
+ /usr/include/c++/9/bits/stl_list.h /usr/include/c++/9/bits/list.tcc \
+ /usr/local/include/ilqgames/solver/augmented_lagrangian_solver.h

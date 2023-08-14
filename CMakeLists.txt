@@ -32,7 +32,7 @@ find_package(Glog REQUIRED)
 
 # Link EXTERNAL library libilqgames.a (static library in /usr/local/lib)
 add_library(ilqgames STATIC IMPORTED)
-set_target_properties(ilqgames PROPERTIES IMPORTED_LOCATION "${CMAKE_INSTALL_PREFIX}/lib/libilqgames.a")
+set_target_properties(ilqgames PROPERTIES IMPORTED_LOCATION "${CMAKE_INSTALL_PREFIX}/lib/ilqgames/libilqgames.a")
 target_link_libraries(${PROJECT_NAME} ilqgames)
 
 # Link EXTERNAL library libglog.a (static library in /usr/local/lib)

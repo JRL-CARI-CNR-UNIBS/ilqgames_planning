@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/ilqgames_planning_main.dir/src/main.cpp.o  -o ilqgames_planning_main  -Wl,-rpath,/usr/local/lib libilqgames_planning.a /usr/local/lib/libilqgames.a -lglog /usr/local/lib/libgflags.so.2.2.2 -lpthread 
+/usr/bin/c++ -g CMakeFiles/ilqgames_planning_main.dir/src/main.cpp.o -o ilqgames_planning_main  -Wl,-rpath,/usr/local/lib libilqgames_planning.a /usr/local/lib/ilqgames/libilqgames.a -lglog /usr/local/lib/libgflags.so.2.2.2 -lpthread 

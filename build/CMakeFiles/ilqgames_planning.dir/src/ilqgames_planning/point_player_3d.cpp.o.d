@@ -2,9 +2,9 @@ CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o: \
  /home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp \
  /usr/include/stdc-predef.h \
  /home/abel/Documents/HRI_PhD/ilqgames_planning/include/ilqgames_planning/point_player_3d.h \
- /usr/local/include/ilqgames/ilqgames/dynamics/single_player_dynamical_system.h \
- /usr/local/include/ilqgames/ilqgames/utils/types.h \
- /usr/include/c++/9/math.h /usr/include/c++/9/cmath \
+ /usr/local/include/ilqgames/dynamics/single_player_dynamical_system.h \
+ /usr/local/include/ilqgames/utils/types.h /usr/include/c++/9/math.h \
+ /usr/include/c++/9/cmath \
  /usr/include/x86_64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/9/bits/os_defines.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
