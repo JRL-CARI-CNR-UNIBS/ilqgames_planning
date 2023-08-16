@@ -6,27 +6,3 @@
 
 #IncludeRegexTransform: 
 
-../include/ilqgames_planning/hand_tcp_point3D.h
-ilqgames/solver/top_down_renderable_problem.h
--
-
-../include/ilqgames_planning/point_player_3d.h
-ilqgames/dynamics/single_player_dynamical_system.h
--
-
-/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp
-ilqgames_planning/point_player_3d.h
--
-ilqgames_planning/hand_tcp_point3D.h
--
-ilqgames/dynamics/concatenated_dynamical_system.h
--
-ilqgames/cost/quadratic_cost.h
--
-
-/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp
-ilqgames_planning/point_player_3d.h
--
-ilqgames/utils/types.h
--
-

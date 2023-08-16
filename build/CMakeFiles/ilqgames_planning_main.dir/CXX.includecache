@@ -6,19 +6,3 @@
 
 #IncludeRegexTransform: 
 
-../include/ilqgames_planning/hand_tcp_point3D.h
-ilqgames/solver/top_down_renderable_problem.h
--
-
-/home/abel/Documents/HRI_PhD/ilqgames_planning/src/main.cpp
-ilqgames_planning/hand_tcp_point3D.h
--
-ilqgames/solver/ilq_solver.h
--
-ilqgames/solver/augmented_lagrangian_solver.h
--
-gflags/gflags.h
--
-glog/logging.h
--
-

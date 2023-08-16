@@ -1,19 +1,28 @@
-
-# Consider dependencies only in project.
-set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
-
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
+  "CXX"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp" "/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o"
+  "/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp" "/home/abel/Documents/HRI_PhD/ilqgames_planning/build/CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o"
+  )
+set(CMAKE_CXX_COMPILER_ID "GNU")
+
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_CXX
+  "GFLAGS_IS_A_DLL=0"
+  "ILQGAMES_LOG_DIR=\"/home/abel/Documents/HRI_PhD/ilqgames/logs\""
   )
 
-# The set of dependency files which are needed:
-set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/hand_tcp_point3D.cpp" "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o" "gcc" "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/hand_tcp_point3D.cpp.o.d"
-  "/home/abel/Documents/HRI_PhD/ilqgames_planning/src/ilqgames_planning/point_player_3d.cpp" "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o" "gcc" "CMakeFiles/ilqgames_planning.dir/src/ilqgames_planning/point_player_3d.cpp.o.d"
+# The include file search paths:
+set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "../include"
+  "/usr/include/eigen3"
   )
 
-# Targets to which this target links which contain Fortran sources.
-set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.

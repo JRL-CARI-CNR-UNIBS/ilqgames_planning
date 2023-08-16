@@ -1,8 +1,20 @@
 cmake_minimum_required(VERSION 3.13.0)
-project(ilqgames_planning C CXX)
-set(CMAKE_EXPORT_COMPILE_COMMANDS 0)
+project(ilqgames_planning
+        LANGUAGES C CXX
+        VERSION 0.0.1)
 
-#LIBRARY
+message("Project Version: " ${${PROJECT_NAME}_VERSION})
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
+# Set the build type. Default to Release mode.
+if(NOT CMAKE_BUILD_TYPE)
+  message("Defaulting to building targets in Debug mode.")
+  set(CMAKE_BUILD_TYPE Debug)
+endif(NOT CMAKE_BUILD_TYPE)
+
+
+# === BUILD LIBRARY === #
 # Collect source files and build the ilqgames object.
 file(GLOB_RECURSE ${PROJECT_NAME}_srcs ${CMAKE_SOURCE_DIR}/src/${PROJECT_NAME}/*.cpp)
 
@@ -13,7 +25,7 @@ add_library(${PROJECT_NAME} ${${PROJECT_NAME}_srcs})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 
-#EXECUTABLE
+# === BUILD EXECUTABLES === #
 # Add executables within this package to the target module "ilqgames_planning_main"
 add_executable(${PROJECT_NAME}_main src/main.cpp)
 
@@ -24,38 +36,21 @@ target_include_directories(${PROJECT_NAME}_main PUBLIC ${CMAKE_SOURCE_DIR}/inclu
 target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME})
 
 
-
 # === EXTERNAL DEPENDENCIES === #
-find_package(Eigen3 REQUIRED)
-find_package(Gflags REQUIRED)
-find_package(Glog REQUIRED)
-
-# Link EXTERNAL library libilqgames.a (static library in /usr/local/lib)
-add_library(ilqgames STATIC IMPORTED)
-set_target_properties(ilqgames PROPERTIES IMPORTED_LOCATION "${CMAKE_INSTALL_PREFIX}/lib/ilqgames/libilqgames.a")
+# ilqgames
+find_package(ilqgames REQUIRED)
 target_link_libraries(${PROJECT_NAME} ilqgames)
 
-# Link EXTERNAL library libglog.a (static library in /usr/local/lib)
-target_link_libraries(${PROJECT_NAME} glog)
-
-# Link EXTERNAL library libgflags.a (static library in /usr/local/lib)
-target_link_libraries(${PROJECT_NAME} gflags)
-
-# Include EXTERNAL headers from /usr/local/include
-target_include_directories(ilqgames INTERFACE
-                           ${CMAKE_INSTALL_PREFIX}/include/ilqgames
-                           ${CMAKE_INSTALL_PREFIX}/include/glog
-                           ${CMAKE_INSTALL_PREFIX}/include/gflags
-                           ${EIGEN3_INCLUDE_DIR})
+# Eigen
+find_package(Eigen3 REQUIRED)
+include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 
 
 # === COMPILER CONSTANTS === #
-add_definitions(-DILQGAMES_LOG_DIR="${CMAKE_SOURCE_DIR}/logs")
-
 # Redefine the logging directory of the ilqgames target library
-# set_target_properties(ilqgames
-#                       PROPERTIES
-#                       ILQGAMES_LOG_DIR "${CMAKE_SOURCE_DIR}/logs")
+set_target_properties(ilqgames
+                      PROPERTIES
+                      ILQGAMES_LOG_DIR "${CMAKE_SOURCE_DIR}/logs")
                       
-# get_target_property(DEFS ilqgames ILQGAMES_LOG_DIR)
-# message("Redefined logging directory: " ${DEFS})
+get_target_property(DEFS ilqgames ILQGAMES_LOG_DIR)
+message("Redefined logging directory: " ${DEFS})
