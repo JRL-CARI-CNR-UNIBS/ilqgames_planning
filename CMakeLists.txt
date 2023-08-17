@@ -40,17 +40,10 @@ target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME})
 # ilqgames
 find_package(ilqgames REQUIRED)
 target_link_libraries(${PROJECT_NAME} ilqgames)
+get_target_property(DEFS ilqgames INTERFACE_COMPILE_DEFINITIONS)
+message("ILQGAMES logging directory: " ${DEFS})
 
 # Eigen
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
-
-
-# === COMPILER CONSTANTS === #
-# Redefine the logging directory of the ilqgames target library
-set_target_properties(ilqgames
-                      PROPERTIES
-                      ILQGAMES_LOG_DIR "${CMAKE_SOURCE_DIR}/logs")
                       
-get_target_property(DEFS ilqgames ILQGAMES_LOG_DIR)
-message("Redefined logging directory: " ${DEFS})

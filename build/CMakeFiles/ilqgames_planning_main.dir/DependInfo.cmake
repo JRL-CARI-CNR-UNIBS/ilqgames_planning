@@ -11,7 +11,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX
   "GFLAGS_IS_A_DLL=0"
-  "ILQGAMES_LOG_DIR=\"/home/abel/Documents/HRI_PhD/ilqgames/logs\""
+  "ILQGAMES_LOG_DIR=\"/home/abel/Documents/HRI_PhD/ilqgames_planning/logs\""
   )
 
 # The include file search paths:

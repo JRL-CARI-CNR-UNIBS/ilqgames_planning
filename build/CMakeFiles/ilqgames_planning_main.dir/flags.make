@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_FLAGS = -g  
 
-CXX_DEFINES = -DGFLAGS_IS_A_DLL=0 -DILQGAMES_LOG_DIR=\"/home/abel/Documents/HRI_PhD/ilqgames/logs\"
+CXX_DEFINES = -DGFLAGS_IS_A_DLL=0 -DILQGAMES_LOG_DIR=\"/home/abel/Documents/HRI_PhD/ilqgames_planning/logs\"
 
 CXX_INCLUDES = -I/home/abel/Documents/HRI_PhD/ilqgames_planning/include -isystem /usr/include/eigen3 
 
