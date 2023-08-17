@@ -5,13 +5,13 @@
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 
-
+#include <stdio.h>
 // Optional log saving and visualization.
 DEFINE_bool(save, true, "Optionally save solver logs to disk.");
 DEFINE_bool(viz, false, "Visualize results in a GUI.");
 DEFINE_bool(last_traj, false,
             "Should the solver only dump the last trajectory?");
-DEFINE_string(experiment_name, "", "Name for the experiment.");
+DEFINE_string(experiment_name, "hand_tcp_point3D", "Name for the experiment.");
 
 // Regularization.
 DEFINE_double(state_regularization, 1.0, "State regularization.");
@@ -26,7 +26,7 @@ DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter.");
 
 int main(int argc, char **argv) {
     const std::string log_file =
-        ILQGAMES_LOG_DIR + std::string("/hand_tcp_point3D.log");
+        ILQGAMES_LOG_DIR + std::string("/") + FLAGS_experiment_name + std::string(".log");
     google::SetLogDestination(0, log_file.c_str());
     google::InitGoogleLogging(argv[0]);
     gflags::ParseCommandLineFlags(&argc, &argv, true);

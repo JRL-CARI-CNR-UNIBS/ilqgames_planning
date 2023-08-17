@@ -12,7 +12,6 @@ imgui.ini
 
 # Logs.
 logs/
-python/logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -88,6 +87,10 @@ target/
 
 # pyenv
 .python-version
+*_venv/
+
+# Python
+__pycache__/
 
 # celery beat schedule file
 celerybeat-schedule
