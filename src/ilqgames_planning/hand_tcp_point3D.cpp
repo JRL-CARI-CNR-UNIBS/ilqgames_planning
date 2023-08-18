@@ -7,6 +7,11 @@ namespace ilqgames_planning {
 
 namespace {
 
+// TimeStep & TimeHorizon
+// Edit variables kTimeStep and kTimeHorizon in file
+// "/ilqgames/include/ilqgames/utils/types.h:133" and recompile the ilqgames library
+// (Default values: kTimeStep = 0.1, kTimeHorizon = 10.0)
+
 // Input contraints
 static constexpr float kHumanHandMaxAx = 4.0;  // m/s^2
 static constexpr float kHumanHandMaxAy = 4.0;  // m/s^2
