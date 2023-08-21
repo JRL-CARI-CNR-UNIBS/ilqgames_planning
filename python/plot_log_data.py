@@ -64,8 +64,10 @@ def plot_states(states):
 
     fig = px.line(df, x="time", y=df.columns[1:], title='States')
     fig.show()  
-    fig3d = px.line_3d(df, x="x_0", y="y_0", z="z_0", title='Trajectory of agent 0 in cartesian space')
-    fig3d.show()  
+    fig3d_agent0 = px.line_3d(df, x="x_0", y="y_0", z="z_0", title='Trajectory of agent 0 in cartesian space')
+    fig3d_agent0.show()
+    fig3d_agent1 = px.line_3d(df, x="x_1", y="y_1", z="z_1", title='Trajectory of agent 1 in cartesian space')
+    fig3d_agent1.show() 
 
 
 def main():

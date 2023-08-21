@@ -6,6 +6,7 @@ project(ilqgames_planning
 message("Project Version: " ${${PROJECT_NAME}_VERSION})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CPP_VERSION 17 CACHE STRING "C++ version to use.")
 
 # Set the build type. Default to Release mode.
 if(NOT CMAKE_BUILD_TYPE)
@@ -34,7 +35,7 @@ target_include_directories(${PROJECT_NAME}_main PUBLIC ${CMAKE_SOURCE_DIR}/inclu
 
 # Link ${PROJECT_NAME} library to ${PROJECT_NAME}_main
 target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME})
-
+set_property(TARGET ${PROJECT_NAME}_main PROPERTY CXX_STANDARD ${CPP_VERSION})
 
 # === EXTERNAL DEPENDENCIES === #
 # ilqgames
