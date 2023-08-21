@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 LOG_DIRECTORY = "../logs/"
+EXAMPLE_LOGDIR = "hand_tcp_point3D_7"
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
@@ -52,27 +53,37 @@ def sort_dict(dictionary):
 
 def array2df(array):
     times = pd.DataFrame(np.arange(0, array[0].shape[0]*SAMPLING_TIME, SAMPLING_TIME)) # create time vector
-    df = pd.DataFrame(np.reshape(array[0], (array[0].shape[1], -1)).T) # reshape to (n_rows, n_columns)
+    df = pd.DataFrame(array[0]) # reshape to (n_rows, n_columns)
     df.insert(0, 'time', times)
     return df
 
 
 def plot_states(states):
+    figs = {}
     for operating_point in states.keys():
-        df = array2df(states[operating_point])
-        df.columns = ['time', 'x_0', 'vx_0', 'y_0', 'vy_0', 'z_0', 'vz_0','x_1', 'vx_1', 'y_1', 'vy_1', 'z_1', 'vz_1']
+        if operating_point == max(states.keys()): # plot only the last operating point
+            df = array2df(states[operating_point])
+            df.columns = ['time', 'x_0', 'vx_0', 'y_0', 'vy_0', 'z_0', 'vz_0','x_1', 'vx_1', 'y_1', 'vy_1', 'z_1', 'vz_1']
 
-    fig = px.line(df, x="time", y=df.columns[1:], title='States')
-    fig.show()  
-    fig3d_agent0 = px.line_3d(df, x="x_0", y="y_0", z="z_0", title='Trajectory of agent 0 in cartesian space')
-    fig3d_agent0.show()
-    fig3d_agent1 = px.line_3d(df, x="x_1", y="y_1", z="z_1", title='Trajectory of agent 1 in cartesian space')
-    fig3d_agent1.show() 
+            start_state_agent0 = df.iloc[0, 1:7]
+            start_state_agent1 = df.iloc[0, 7:13]
+
+            fig3d_agent_traj = go.Figure()
+            fig3d_agent_traj.add_scatter3d(x=df['x_0'], y=df['y_0'], z=df['z_0'], mode='lines', name='agent0')
+            fig3d_agent_traj.add_scatter3d(x=df['x_1'], y=df['y_1'], z=df['z_1'], mode='lines', name='agent1')
+            fig3d_agent_traj.add_scatter3d(x=np.array(start_state_agent0['x_0']), y=np.array(start_state_agent0['y_0']), z=np.array(start_state_agent0['z_0']), mode='markers', name='agent0_start')
+            fig3d_agent_traj.add_scatter3d(x=np.array(start_state_agent1['x_1']), y=np.array(start_state_agent1['y_1']), z=np.array(start_state_agent1['z_1']), mode='markers', name='agent1_start')
+            figs['OP_' + str(operating_point) + '_trajectories'] = fig3d_agent_traj
+
+            fig_states = px.line(df, x="time", y=df.columns[1:], title='States [OP: ' + str(operating_point) + ']')
+            figs['OP_' + str(operating_point) + '_states'] = fig_states
+
+    for fig in figs.values():
+        fig.show()
 
 
 def main():
-    example_logdir = "hand_tcp_point3D"
-    path_to_logfile = os.path.join(LOG_DIRECTORY, example_logdir)
+    path_to_logfile = os.path.join(LOG_DIRECTORY, EXAMPLE_LOGDIR)
 
     gen_dir = os.walk(path_to_logfile)
     dirs = [x[0] for x in gen_dir][1:]
@@ -82,6 +93,10 @@ def main():
     control_inputs = {}
     t0s = {}
     runtimes = {}
+
+    if not dirs:
+        print("No log files found in directory " + path_to_logfile + ". Directory must contain at least one subdirectory with log files.")
+        return
 
     for dir in dirs:
         operating_point = int(dir.split('/')[-1])
