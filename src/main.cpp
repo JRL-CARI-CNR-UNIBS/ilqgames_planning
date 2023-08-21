@@ -31,15 +31,20 @@ DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter.");
 
 int find_max_idx_in_logdir(); // custom function to find the maximum index in the logging directory
 
+
 int main(int argc, char **argv) {
+
+    // Set the logging directory
     const std::string log_file =
         ILQGAMES_LOG_DIR + std::string("/") + FLAGS_experiment_name + std::string(".log");
     google::SetLogDestination(0, log_file.c_str());
     google::InitGoogleLogging(argv[0]);
+
+    // Init Command Line Flags
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     FLAGS_logtostderr = true;
 
-    // Solve for open-loop information pattern
+    // Set ilqgames solver parameters
     ilqgames::SolverParams params;
     params.max_backtracking_steps = 100;
     params.linesearch = FLAGS_linesearch;
@@ -72,26 +77,8 @@ int main(int argc, char **argv) {
         } else {
             if (fs::is_empty(ILQGAMES_LOG_DIR))
                 CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_0"));
-
             else {
-                std::regex rgx("_[^_]+$");
-                std::smatch match;
-                std::string idx_str;
-                int max_idx = 0;
-                std::vector<int> idxs = {};
-
-                for (const auto & entry : fs::directory_iterator(ILQGAMES_LOG_DIR)) {
-                    const std::string filename = entry.path().c_str();
-//                    std::cout << filename << std::endl;
-
-                    if (std::regex_search(filename.begin(), filename.end(), match, rgx)) {
-                        idx_str = match.str(0).substr(1,match.str(0).size());
-    //                    std::cout << "Matched substring: " << idx_str << std::endl;
-                        idxs.push_back(stoi(idx_str));
-                    }
-                }
-                max_idx = find_max_idx_in_logdir();
-                CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(max_idx+1)));
+                CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_logdir()+1)));
             }
         }
     }
