@@ -2,7 +2,7 @@
 #include <ilqgames_planning/hand_tcp_point3D.h>
 #include <ilqgames/dynamics/concatenated_dynamical_system.h>
 #include <ilqgames/cost/quadratic_cost.h>
-#include <ilqgames/cost/proximity_cost.h>
+#include <ilqgames_planning/proximity_cost_3d.h>
 #include <ilqgames/constraint/single_dimension_constraint.h>
 
 namespace ilqgames_planning {
@@ -24,61 +24,61 @@ namespace {
 //static constexpr float kRobotTcpMaxAz = 50.0;  // m/s^2
 
 // Cost weights
-static constexpr float kHumanHandGoalXCost = 50.0;
-static constexpr float kHumanHandGoalYCost = 50.0;
-static constexpr float kHumanHandGoalZCost = 50.0;
+static constexpr float kHumanHandGoalXCost = 100.0;
+static constexpr float kHumanHandGoalYCost = 100.0;
+static constexpr float kHumanHandGoalZCost = 100.0;
 
-static constexpr float kRobotTcpGoalXCost = 50.0;
-static constexpr float kRobotTcpGoalYCost = 50.0;
-static constexpr float kRobotTcpGoalZCost = 50.0;
+static constexpr float kRobotTcpGoalXCost = 10.0;
+static constexpr float kRobotTcpGoalYCost = 10.0;
+static constexpr float kRobotTcpGoalZCost = 10.0;
 
-static constexpr float kHumanHandGoalVxCost = 15.0;
-static constexpr float kHumanHandGoalVyCost = 15.0;
-static constexpr float kHumanHandGoalVzCost = 15.0;
+static constexpr float kHumanHandGoalVxCost = 0.0;
+static constexpr float kHumanHandGoalVyCost = 0.0;
+static constexpr float kHumanHandGoalVzCost = 0.0;
 
-static constexpr float kRobotTcpGoalVxCost = 15.0;
-static constexpr float kRobotTcpGoalVyCost = 15.0;
-static constexpr float kRobotTcpGoalVzCost = 15.0;
+static constexpr float kRobotTcpGoalVxCost = 0.0;
+static constexpr float kRobotTcpGoalVyCost = 0.0;
+static constexpr float kRobotTcpGoalVzCost = 0.0;
 
-static constexpr float kHumanHandAccXCost = 5.0;
-static constexpr float kHumanHandAccYCost = 5.0;
-static constexpr float kHumanHandAccZCost = 5.0;
+static constexpr float kHumanHandAccXCost = 0.0;
+static constexpr float kHumanHandAccYCost = 0.0;
+static constexpr float kHumanHandAccZCost = 0.0;
 
-static constexpr float kRobotTcpAccXCost = 5.0;
-static constexpr float kRobotTcpAccYCost = 5.0;
-static constexpr float kRobotTcpAccZCost = 5.0;
+static constexpr float kRobotTcpAccXCost = 0.0;
+static constexpr float kRobotTcpAccYCost = 0.0;
+static constexpr float kRobotTcpAccZCost = 0.0;
 
-static constexpr float kProximityCostWeight = 10.0;
+static constexpr float kProximityCostWeight = 0.0;
 
 //// Nominal speed
 //static constexpr float kHumanHandNominalV = 3.0;    // m/s
 //static constexpr float kRobotTcpNominalV = 4.0;     // m/s
 
 // Initial state
-static constexpr float kHumanHandInitialX = -1.0;    // m
-static constexpr float kHumanHandInitialY = -10.0;    // m
+static constexpr float kHumanHandInitialX = 1.0;    // m
+static constexpr float kHumanHandInitialY = 1.0;    // m
 static constexpr float kHumanHandInitialZ = 1.0;    // m
 
-static constexpr float kRobotTcpInitialX = 2.0;    // m
-static constexpr float kRobotTcpInitialY = -3.0;     // m
+static constexpr float kRobotTcpInitialX = -1.0;    // m
+static constexpr float kRobotTcpInitialY = -1.0;     // m
 static constexpr float kRobotTcpInitialZ = -1.0;     // m
 
 static constexpr float kHumanHandInitialVx = 1.0;   // m/s
-static constexpr float kHumanHandInitialVy = -1.5;   // m/s
-static constexpr float kHumanHandInitialVz = -1.0;   // m/s
+static constexpr float kHumanHandInitialVy = 1.5;   // m/s
+static constexpr float kHumanHandInitialVz = 1.0;   // m/s
 
 static constexpr float kRobotTcpInitialVx = -2.0;    // m/s
 static constexpr float kRobotTcpInitialVy = -3.0;    // m/s
 static constexpr float kRobotTcpInitialVz = -1.0;    // m/s
 
 // Target state
-static constexpr float kHumanHandTargetX = 5.0;    // m
-static constexpr float kHumanHandTargetY = 2.0;    // m
-static constexpr float kHumanHandTargetZ = 4.0;    // m
+static constexpr float kHumanHandTargetX = -1.5;    // m
+static constexpr float kHumanHandTargetY = -1.5;    // m
+static constexpr float kHumanHandTargetZ = -1.5;    // m
 
-static constexpr float kRobotTcpTargetX = -4.0;    // m
-static constexpr float kRobotTcpTargetY = -3.5;     // m
-static constexpr float kRobotTcpTargetZ = -1.5;     // m
+static constexpr float kRobotTcpTargetX = 2.0;    // m
+static constexpr float kRobotTcpTargetY = 2.0;     // m
+static constexpr float kRobotTcpTargetZ = 2.0;     // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s
@@ -262,6 +262,18 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //    robotTcp_cost.AddControlConstraint(1, robotTcp_accZ_min_constraint);
 
 
+    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
+    constexpr float kMinProximity = 1;  // m
+    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
+        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
+                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
+                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
+                                               kMinProximity, "Proximity"));
+
+    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
+    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
+
+
 //    // Encourage each player to go a given nominal speed.
 //    const auto humanHand_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
 //      kNominalVCostWeight, kP1VIdx, kP1NominalV, "NominalV");
@@ -272,18 +284,6 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //      kNominalVCostWeight, kP2VIdx, kP2NominalV, "NominalV");
 
 //    robotTcp_cost.AddStateCost(p2_nominal_v_cost);
-
-
-    // Penalize proximity (could also use a constraint).
-    constexpr float kMinProximity = 0.25;  // m
-    const std::shared_ptr<ilqgames::ProximityCost> humanRobot_proximity_cost(
-        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
-                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
-                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
-                                               kMinProximity, "Proximity"));
-
-    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
-    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
 
 
 //    // Encourage each player to remain near the lane center. Could also add
@@ -303,8 +303,6 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //      new QuadraticPolyline2Cost(kLaneCostWeight, lane2, {kP2XIdx, kP2YIdx},
 //                                 "LaneCenter"));
 //    p2_cost.AddStateCost(p2_lane_cost);
-
-
 }
 
 inline std::vector<float> HandTcpPoint3D::Xs(const Eigen::VectorXf& x) const {
