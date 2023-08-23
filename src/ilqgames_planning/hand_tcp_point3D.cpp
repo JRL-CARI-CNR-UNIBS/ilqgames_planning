@@ -28,9 +28,9 @@ static constexpr float kHumanHandGoalXCost = 100.0;
 static constexpr float kHumanHandGoalYCost = 100.0;
 static constexpr float kHumanHandGoalZCost = 100.0;
 
-static constexpr float kRobotTcpGoalXCost = 10.0;
-static constexpr float kRobotTcpGoalYCost = 10.0;
-static constexpr float kRobotTcpGoalZCost = 10.0;
+static constexpr float kRobotTcpGoalXCost = 1000.0;
+static constexpr float kRobotTcpGoalYCost = 1000.0;
+static constexpr float kRobotTcpGoalZCost = 1000.0;
 
 static constexpr float kHumanHandGoalVxCost = 0.0;
 static constexpr float kHumanHandGoalVyCost = 0.0;
@@ -63,22 +63,22 @@ static constexpr float kRobotTcpInitialX = -1.0;    // m
 static constexpr float kRobotTcpInitialY = -1.0;     // m
 static constexpr float kRobotTcpInitialZ = -1.0;     // m
 
-static constexpr float kHumanHandInitialVx = 1.0;   // m/s
-static constexpr float kHumanHandInitialVy = 1.5;   // m/s
-static constexpr float kHumanHandInitialVz = 1.0;   // m/s
+static constexpr float kHumanHandInitialVx = 0.0;   // m/s
+static constexpr float kHumanHandInitialVy = 0.0;   // m/s
+static constexpr float kHumanHandInitialVz = 0.0;   // m/s
 
-static constexpr float kRobotTcpInitialVx = -2.0;    // m/s
-static constexpr float kRobotTcpInitialVy = -3.0;    // m/s
-static constexpr float kRobotTcpInitialVz = -1.0;    // m/s
+static constexpr float kRobotTcpInitialVx = 0.0;    // m/s
+static constexpr float kRobotTcpInitialVy = 0.0;    // m/s
+static constexpr float kRobotTcpInitialVz = 0.0;    // m/s
 
 // Target state
-static constexpr float kHumanHandTargetX = -1.5;    // m
-static constexpr float kHumanHandTargetY = -1.5;    // m
-static constexpr float kHumanHandTargetZ = -1.5;    // m
+static constexpr float kHumanHandTargetX = 1.0;    // m
+static constexpr float kHumanHandTargetY = 1.0;    // m
+static constexpr float kHumanHandTargetZ = 1.0;    // m
 
-static constexpr float kRobotTcpTargetX = 2.0;    // m
-static constexpr float kRobotTcpTargetY = 2.0;     // m
-static constexpr float kRobotTcpTargetZ = 2.0;     // m
+static constexpr float kRobotTcpTargetX = -0.5;    // m
+static constexpr float kRobotTcpTargetY = -0.5;     // m
+static constexpr float kRobotTcpTargetZ = -0.5;     // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s

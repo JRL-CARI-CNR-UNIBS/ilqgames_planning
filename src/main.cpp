@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
     // Set ilqgames solver parameters
     ilqgames::SolverParams params;
     params.max_backtracking_steps = 500; //DEFAULT: 100
+    params.unconstrained_solver_max_iters = 10; //DEFAULT: 10
     params.linesearch = FLAGS_linesearch;
     params.expected_decrease_fraction = FLAGS_expected_decrease;
     params.initial_alpha_scaling = FLAGS_initial_alpha_scaling;

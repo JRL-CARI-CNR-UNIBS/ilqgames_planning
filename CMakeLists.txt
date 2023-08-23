@@ -40,7 +40,9 @@ set_property(TARGET ${PROJECT_NAME}_main PROPERTY CXX_STANDARD ${CPP_VERSION})
 # === EXTERNAL DEPENDENCIES === #
 # ilqgames
 find_package(ilqgames REQUIRED)
-target_link_libraries(${PROJECT_NAME} ilqgames)
+
+target_link_libraries(${PROJECT_NAME} ${ilqgames_LIBRARIES})
+
 get_target_property(DEFS ilqgames INTERFACE_COMPILE_DEFINITIONS)
 message("ILQGAMES logging directory: " ${DEFS})
 

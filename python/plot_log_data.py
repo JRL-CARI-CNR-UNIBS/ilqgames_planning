@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 LOG_DIRECTORY = "../logs/"
-EXAMPLE_LOGDIR = "hand_tcp_point3D_0"
+EXAMPLE_LOGDIR = "hand_tcp_point3D_14"
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
