@@ -1,6 +1,9 @@
 #include <ilqgames_planning/hand_tcp_point3D.h>
 #include <ilqgames/solver/ilq_solver.h>
 #include <ilqgames/solver/augmented_lagrangian_solver.h>
+#include <ilqgames/utils/check_local_nash_equilibrium.h>
+#include <ilqgames/utils/compute_strategy_costs.h>
+#include <ilqgames/examples/receding_horizon_simulator.h>
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
@@ -15,9 +18,12 @@ namespace fs = std::filesystem;
 // Optional log saving and visualization.
 DEFINE_bool(save, true, "Optionally save solver logs to disk.");
 DEFINE_bool(viz, false, "Visualize results in a GUI.");
-DEFINE_bool(last_traj, false,
-            "Should the solver only dump the last trajectory?");
+DEFINE_bool(last_traj, false, "Should the solver only dump the last trajectory?");
 DEFINE_string(experiment_name, "hand_tcp_point3D", "Name for the experiment.");
+
+// Open- vs closed-loop & receding horizon
+DEFINE_bool(open_loop, false, "Use open loop (vs. feedback) solver.");
+DEFINE_bool(receding_horizon, false, "Solve in a receding horizon fashion.");
 
 // Regularization.
 DEFINE_double(state_regularization, 1.0, "State regularization.");
@@ -26,7 +32,7 @@ DEFINE_double(control_regularization, 1.0, "Control regularization.");
 // Linesearch parameters.
 DEFINE_bool(linesearch, true, "Should the solver linesearch?"); //DEFAULT: true
 DEFINE_double(initial_alpha_scaling, 0.25, "Initial step size in linesearch.");
-DEFINE_double(convergence_tolerance, 0.01, "KKT squared error tolerance.");
+DEFINE_double(convergence_tolerance, 0.1, "KKT squared error tolerance.");
 DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter.");
 
 int find_max_idx_in_logdir(); // custom function to find the maximum index in the logging directory
@@ -47,15 +53,15 @@ int main(int argc, char **argv) {
 
     // Set ilqgames solver parameters
     ilqgames::SolverParams params;
-    params.max_backtracking_steps = 500; //DEFAULT: 100
-    params.unconstrained_solver_max_iters = 10; //DEFAULT: 10
+    params.max_backtracking_steps = 1000; //DEFAULT: 100
+    params.unconstrained_solver_max_iters = 100; //DEFAULT: 10
     params.linesearch = FLAGS_linesearch;
     params.expected_decrease_fraction = FLAGS_expected_decrease;
     params.initial_alpha_scaling = FLAGS_initial_alpha_scaling;
     params.convergence_tolerance = FLAGS_convergence_tolerance;
     params.state_regularization = FLAGS_state_regularization;
     params.control_regularization = FLAGS_control_regularization;
-    params.open_loop = false;
+    params.open_loop = FLAGS_open_loop;
 
     // Solve for feedback equilibrium
     auto problem = std::make_shared<ilqgames_planning::HandTcpPoint3D>();
@@ -63,33 +69,71 @@ int main(int argc, char **argv) {
     LOG(INFO) << "Is the problem constrained? " << (problem->IsConstrained() ? "YES" : "NO");
     ilqgames::AugmentedLagrangianSolver solver(problem, params);
 
-    // Solve the game
-    const auto start = std::chrono::system_clock::now();
-    bool value = false;
-    bool* solver_converged = &value;
-    const std::shared_ptr<const ilqgames::SolverLog> log = solver.Solve(solver_converged);
-    LOG(INFO) << "Did the solver converge? " << (*solver_converged ? "YES" : "NO");
-    if (*solver_converged == true)
-        LOG(INFO) << "Solver converged.";
+    if (!FLAGS_receding_horizon) {
+        // Solve the game (one-step)
+        const auto start = std::chrono::system_clock::now();
+        bool value = false;
+        bool* solver_converged = &value;
+        const std::shared_ptr<const ilqgames::SolverLog> log = solver.Solve(solver_converged);
 
-    const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs = {log};
-    LOG(INFO) << "Solver completed in "
-              << std::chrono::duration<ilqgames::Time>(
-                 std::chrono::system_clock::now() - start).count()
-              << " seconds.";
+        LOG(INFO) << "Did the solver converge? " << (*solver_converged ? "YES" : "NO");
+        LOG(INFO) << "Solver completed in "
+                  << std::chrono::duration<ilqgames::Time>(
+                     std::chrono::system_clock::now() - start).count()
+                  << " seconds.";
 
-    // Dump the logs and/or exit
-    if (FLAGS_save) {
-        if (FLAGS_experiment_name == "") {
-            CHECK(log->Save(FLAGS_last_traj));
+        // Compute strategy costs
+        problem->OverwriteSolution(log->FinalOperatingPoint(),
+                                   log->FinalStrategies());
+        const std::vector<float> total_costs =
+            ilqgames::ComputeStrategyCosts(*problem);
 
-        } else {
-            if (fs::is_empty(ILQGAMES_LOG_DIR))
-                CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_0"));
-            else {
-                CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_logdir()+1)));
+        LOG(INFO) << "Total strategy costs are: ";
+        for (const float c : total_costs)
+            LOG(INFO) << c;
+
+        // Check if solution satisfies sufficient conditions for being a local Nash
+        LOG(INFO) << "Check sufficient condition for local Nash equilibrium";
+
+        const bool may_be_local_nash = ilqgames::CheckSufficientLocalNashEquilibrium(*problem);
+        if (may_be_local_nash)
+            LOG(INFO) << "Solution is a local Nash.";
+        else
+            LOG(INFO) << "Solution may not be a local Nash.";
+
+        LOG(INFO) << "Numerical check for local Nash equilibrium";
+        constexpr float kMaxPerturbation = 0.1;
+        const bool is_local_nash = NumericalCheckLocalNashEquilibrium(
+            *problem, kMaxPerturbation, false);
+        if (is_local_nash)
+            LOG(INFO) << "Feedback solution is a local Nash.";
+        else
+            LOG(INFO) << "Feedback solution is not a local Nash.";
+
+        // Create log list
+        const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs = {log};
+
+        // Dump the logs and/or exit
+        if (FLAGS_save) {
+            if (FLAGS_experiment_name == "") {
+                CHECK(log->Save(FLAGS_last_traj));
+
+            } else {
+                if (fs::is_empty(ILQGAMES_LOG_DIR))
+                    CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_0"));
+                else {
+                    CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_logdir()+1)));
+                }
             }
         }
+    }
+!!! HOW TO DUMP LOGS FOR RECEDING HORIZON? !!!
+    else {
+        // Solve the game (receding horizon)
+        constexpr ilqgames::Time kFinalTime = 10.0;       // s
+        constexpr ilqgames::Time kPlannerRuntime = 0.25;  // s
+        const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs =
+            ilqgames::RecedingHorizonSimulator(kFinalTime, kPlannerRuntime, &solver);
     }
 
     return 0;

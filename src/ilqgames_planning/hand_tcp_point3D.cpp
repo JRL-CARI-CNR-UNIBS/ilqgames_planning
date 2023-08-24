@@ -24,13 +24,13 @@ namespace {
 //static constexpr float kRobotTcpMaxAz = 50.0;  // m/s^2
 
 // Cost weights
-static constexpr float kHumanHandGoalXCost = 100.0;
-static constexpr float kHumanHandGoalYCost = 100.0;
-static constexpr float kHumanHandGoalZCost = 100.0;
+static constexpr float kHumanHandGoalXCost = 1.0;
+static constexpr float kHumanHandGoalYCost = 1.0;
+static constexpr float kHumanHandGoalZCost = 1.0;
 
-static constexpr float kRobotTcpGoalXCost = 1000.0;
-static constexpr float kRobotTcpGoalYCost = 1000.0;
-static constexpr float kRobotTcpGoalZCost = 1000.0;
+static constexpr float kRobotTcpGoalXCost = 0.0;
+static constexpr float kRobotTcpGoalYCost = 0.0;
+static constexpr float kRobotTcpGoalZCost = 0.0;
 
 static constexpr float kHumanHandGoalVxCost = 0.0;
 static constexpr float kHumanHandGoalVyCost = 0.0;
@@ -72,13 +72,13 @@ static constexpr float kRobotTcpInitialVy = 0.0;    // m/s
 static constexpr float kRobotTcpInitialVz = 0.0;    // m/s
 
 // Target state
-static constexpr float kHumanHandTargetX = 1.0;    // m
-static constexpr float kHumanHandTargetY = 1.0;    // m
-static constexpr float kHumanHandTargetZ = 1.0;    // m
+static constexpr float kHumanHandTargetX = -2.0;    // m
+static constexpr float kHumanHandTargetY = -2.0;    // m
+static constexpr float kHumanHandTargetZ = -2.0;    // m
 
-static constexpr float kRobotTcpTargetX = -0.5;    // m
-static constexpr float kRobotTcpTargetY = -0.5;     // m
-static constexpr float kRobotTcpTargetZ = -0.5;     // m
+static constexpr float kRobotTcpTargetX = 4.0;      // m
+static constexpr float kRobotTcpTargetY = 4.0;      // m
+static constexpr float kRobotTcpTargetZ = 4.0;      // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s
@@ -172,31 +172,31 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     robotTcp_cost.AddStateCost(robotTcp_goalZ_cost);
 
 
-    // Quadratic state costs for target velocity
-    const auto humanHand_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-        kHumanHandGoalVxCost, kHumanHandVxIdx, kHumanHandTargetVx, "humanHand_goalVx_cost");
-    const auto humanHand_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-        kHumanHandGoalVyCost, kHumanHandVyIdx, kHumanHandTargetVy, "humanHand_goalVy_cost");
-    const auto humanHand_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-        kHumanHandGoalVzCost, kHumanHandVzIdx, kHumanHandTargetVz, "humanHand_goalVz_cost");
+//    // Quadratic state costs for target velocity
+//    const auto humanHand_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+//        kHumanHandGoalVxCost, kHumanHandVxIdx, kHumanHandTargetVx, "humanHand_goalVx_cost");
+//    const auto humanHand_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+//        kHumanHandGoalVyCost, kHumanHandVyIdx, kHumanHandTargetVy, "humanHand_goalVy_cost");
+//    const auto humanHand_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+//        kHumanHandGoalVzCost, kHumanHandVzIdx, kHumanHandTargetVz, "humanHand_goalVz_cost");
 
-    humanHand_cost.AddStateCost(humanHand_goalVx_cost);
-    humanHand_cost.AddStateCost(humanHand_goalVy_cost);
-    humanHand_cost.AddStateCost(humanHand_goalVz_cost);
+//    humanHand_cost.AddStateCost(humanHand_goalVx_cost);
+//    humanHand_cost.AddStateCost(humanHand_goalVy_cost);
+//    humanHand_cost.AddStateCost(humanHand_goalVz_cost);
 
-    const auto robotTcp_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-        kRobotTcpGoalVxCost, kRobotTcpVxIdx, kRobotTcpTargetVx, "robotTcp_goalVx_cost");
-    const auto robotTcp_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-        kRobotTcpGoalVyCost, kRobotTcpVyIdx, kRobotTcpTargetVy, "robotTcp_goalVy_cost");
-    const auto robotTcp_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-        kRobotTcpGoalVzCost, kRobotTcpVzIdx, kRobotTcpTargetVz, "robotTcp_goalVz_cost");
+//    const auto robotTcp_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+//        kRobotTcpGoalVxCost, kRobotTcpVxIdx, kRobotTcpTargetVx, "robotTcp_goalVx_cost");
+//    const auto robotTcp_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+//        kRobotTcpGoalVyCost, kRobotTcpVyIdx, kRobotTcpTargetVy, "robotTcp_goalVy_cost");
+//    const auto robotTcp_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+//        kRobotTcpGoalVzCost, kRobotTcpVzIdx, kRobotTcpTargetVz, "robotTcp_goalVz_cost");
 
-    robotTcp_cost.AddStateCost(robotTcp_goalVx_cost);
-    robotTcp_cost.AddStateCost(robotTcp_goalVy_cost);
-    robotTcp_cost.AddStateCost(robotTcp_goalVz_cost);
+//    robotTcp_cost.AddStateCost(robotTcp_goalVx_cost);
+//    robotTcp_cost.AddStateCost(robotTcp_goalVy_cost);
+//    robotTcp_cost.AddStateCost(robotTcp_goalVz_cost);
 
 
-    // Quadratic control costs.
+    // Quadratic control costs
     const auto humanHand_accX_cost = std::make_shared<ilqgames::QuadraticCost>(
         kHumanHandAccXCost, HumanHand::kAxIdx, 0.0, "humanHand_accX_cost");
     const auto humanHand_accY_cost = std::make_shared<ilqgames::QuadraticCost>(
@@ -262,16 +262,16 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //    robotTcp_cost.AddControlConstraint(1, robotTcp_accZ_min_constraint);
 
 
-    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
-    constexpr float kMinProximity = 1;  // m
-    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
-        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
-                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
-                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
-                                               kMinProximity, "Proximity"));
+//    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
+//    constexpr float kMinProximity = 1;  // m
+//    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
+//        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
+//                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
+//                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
+//                                               kMinProximity, "Proximity"));
 
-    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
-    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
+//    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
+//    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
 
 
 //    // Encourage each player to go a given nominal speed.

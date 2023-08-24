@@ -1,12 +1,14 @@
 import os
 import numpy as np
-import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 import pandas as pd
+import seaborn as sns
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+sns.set_theme(context="paper", style="whitegrid")
 
 LOG_DIRECTORY = "../logs/"
-EXAMPLE_LOGDIR = "hand_tcp_point3D_14"
+EXAMPLE_LOGDIR = "hand_tcp_point3D_0"
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
@@ -55,31 +57,78 @@ def array2df(array):
     times = pd.DataFrame(np.arange(0, array[0].shape[0]*SAMPLING_TIME, SAMPLING_TIME)) # create time vector
     df = pd.DataFrame(array[0]) # reshape to (n_rows, n_columns)
     df.insert(0, 'time', times)
+    df.set_index('time', inplace=True)
     return df
 
 
 def plot_states(states):
-    figs = {}
-    for operating_point in states.keys():
-        if operating_point == max(states.keys()): # plot only the last operating point
-            df = array2df(states[operating_point])
-            df.columns = ['time', 'x_0', 'vx_0', 'y_0', 'vy_0', 'z_0', 'vz_0','x_1', 'vx_1', 'y_1', 'vy_1', 'z_1', 'vz_1']
+    max_operating_point = max(states.keys()) # plot only the last operating point
+    
+    fig = plt.figure('States')
+    ax = fig.add_subplot()
+    ax.set_title("States [OP: " + str(max_operating_point) + "]")
 
-            start_state_agent0 = df.iloc[0, 1:7]
-            start_state_agent1 = df.iloc[0, 7:13]
+    df = array2df(states[max_operating_point])
+    df.columns = ['x_0', 'vx_0', 'y_0', 'vy_0', 'z_0', 'vz_0','x_1', 'vx_1', 'y_1', 'vy_1', 'z_1', 'vz_1']
+    
+    sns.lineplot(ax=ax, data=df)
+    plt.legend(loc='upper right')
 
-            fig3d_agent_traj = go.Figure()
-            fig3d_agent_traj.add_scatter3d(x=df['x_0'], y=df['y_0'], z=df['z_0'], mode='lines', name='agent0')
-            fig3d_agent_traj.add_scatter3d(x=df['x_1'], y=df['y_1'], z=df['z_1'], mode='lines', name='agent1')
-            fig3d_agent_traj.add_scatter3d(x=np.array(start_state_agent0['x_0']), y=np.array(start_state_agent0['y_0']), z=np.array(start_state_agent0['z_0']), mode='markers', name='agent0_start')
-            fig3d_agent_traj.add_scatter3d(x=np.array(start_state_agent1['x_1']), y=np.array(start_state_agent1['y_1']), z=np.array(start_state_agent1['z_1']), mode='markers', name='agent1_start')
-            figs['OP_' + str(operating_point) + '_trajectories'] = fig3d_agent_traj
+    plt.draw()
 
-            fig_states = px.line(df, x="time", y=df.columns[1:], title='States [OP: ' + str(operating_point) + ']')
-            figs['OP_' + str(operating_point) + '_states'] = fig_states
 
-    for fig in figs.values():
-        fig.show()
+def plot_traj_3d(states):
+    max_operating_point = max(states.keys()) # plot only the last operating point
+    
+    fig = plt.figure('3D trajectories')
+    ax = fig.add_subplot(projection='3d')
+
+    # Agent 1 (Human Hand)
+    ax.plot(xs=states[max_operating_point][0][:,0],
+                     ys=states[max_operating_point][0][:,2],
+                     zs=states[max_operating_point][0][:,4], marker='o', markersize=1)
+    ax.scatter(xs=states[max_operating_point][0][0,0],
+               ys=states[max_operating_point][0][0,2],
+               zs=states[max_operating_point][0][0,4], c='r', marker='o', label='Human hand')
+    
+    # Agent 2 (Robot Tcp)
+    ax.plot(xs=states[max_operating_point][0][:,6],
+                        ys=states[max_operating_point][0][:,8],
+                        zs=states[max_operating_point][0][:,10], marker='o', markersize=0.75)
+    ax.scatter(xs=states[max_operating_point][0][0,6],
+               ys=states[max_operating_point][0][0,8],
+               zs=states[max_operating_point][0][0,10], c='g', marker='o', label='Robot TCP')
+    
+    # setting title and labels
+    ax.set_title("States [OP: " + str(max_operating_point) + "]")
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    ax.set_xlabel('x')
+    ax.legend()
+    plt.legend(loc='upper right')
+
+    plt.draw()
+
+
+def plot_control_inputs(control_inputs):
+    max_operating_point = max(control_inputs.keys()) # plot only the last operating point
+
+    fig, axs = plt.subplots(nrows=N_AGENTS, ncols=1, sharex=True)
+    fig.suptitle('Control inputs [OP: ' + str(max_operating_point) + ']')
+    fig.canvas.manager.set_window_title('Control inputs')
+
+    i = 0
+    for agent in control_inputs[max_operating_point].keys():
+        df = array2df(control_inputs[max_operating_point][agent])
+        df.columns = ['ax', 'ay', 'az']
+        
+        axs[i].set_title('Agent: ' + agent)
+        sns.lineplot(ax=axs[i], data=df)
+                     
+        i += 1
+
+    plt.legend(loc='upper right')
+    plt.draw()
 
 
 def main():
@@ -127,8 +176,11 @@ def main():
     t0s = sort_dict(t0s)
     runtimes = sort_dict(runtimes)
 
+    plot_traj_3d(states)
     plot_states(states)
+    plot_control_inputs(control_inputs)
 
+    plt.show()
     pass # for debug
 
 
