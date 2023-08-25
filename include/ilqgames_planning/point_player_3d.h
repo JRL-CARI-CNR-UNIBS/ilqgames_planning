@@ -66,8 +66,8 @@ inline void PointPlayer3D::Linearize(ilqgames::Time t,
 
     ilqgames::Time dt = ilqgames::time::kTimeStep;
 
-    A.block(0,0,kNumXDims,kNumXDims) << Eigen::MatrixXf::Identity(kNumXDims, kNumXDims);
-    B.block(0,0,kNumXDims,kNumUDims) << Eigen::MatrixXf::Zero(kNumXDims, kNumUDims);
+//    A.block(0,0,kNumXDims,kNumXDims) << Eigen::MatrixXf::Identity(kNumXDims, kNumXDims);
+//    B.block(0,0,kNumXDims,kNumUDims) << Eigen::MatrixXf::Zero(kNumXDims, kNumUDims);
 
     A(kPxIdx,kVxIdx) += dt;
     A(kPyIdx,kVyIdx) += dt;

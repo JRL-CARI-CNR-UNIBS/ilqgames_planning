@@ -3,7 +3,7 @@
 #include <ilqgames/solver/augmented_lagrangian_solver.h>
 #include <ilqgames/utils/check_local_nash_equilibrium.h>
 #include <ilqgames/utils/compute_strategy_costs.h>
-#include <ilqgames/examples/receding_horizon_simulator.h>
+#include <ilqgames_planning/receding_horizon_simulator.h>
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
@@ -35,8 +35,8 @@ DEFINE_double(initial_alpha_scaling, 0.25, "Initial step size in linesearch.");
 DEFINE_double(convergence_tolerance, 0.1, "KKT squared error tolerance.");
 DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter.");
 
-int find_max_idx_in_logdir(); // custom function to find the maximum index in the logging directory
-
+int find_max_idx_in_dir(const std::string dir); // custom function to find the maximum index in a given directory
+void pack_dirs(const std::string common_string, const std::string dir);
 
 int main(int argc, char **argv) {
 
@@ -72,11 +72,10 @@ int main(int argc, char **argv) {
     if (!FLAGS_receding_horizon) {
         // Solve the game (one-step)
         const auto start = std::chrono::system_clock::now();
-        bool value = false;
-        bool* solver_converged = &value;
-        const std::shared_ptr<const ilqgames::SolverLog> log = solver.Solve(solver_converged);
+        bool solver_converged = false;
+        const std::shared_ptr<const ilqgames::SolverLog> log = solver.Solve(&solver_converged);
 
-        LOG(INFO) << "Did the solver converge? " << (*solver_converged ? "YES" : "NO");
+        LOG(INFO) << "Did the solver converge? " << (solver_converged ? "YES" : "NO");
         LOG(INFO) << "Solver completed in "
                   << std::chrono::duration<ilqgames::Time>(
                      std::chrono::system_clock::now() - start).count()
@@ -122,32 +121,57 @@ int main(int argc, char **argv) {
                 if (fs::is_empty(ILQGAMES_LOG_DIR))
                     CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_0"));
                 else {
-                    CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_logdir()+1)));
+                    CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_dir(ILQGAMES_LOG_DIR)+1)));
                 }
             }
         }
     }
-!!! HOW TO DUMP LOGS FOR RECEDING HORIZON? !!!
+
     else {
         // Solve the game (receding horizon)
-        constexpr ilqgames::Time kFinalTime = 10.0;       // s
-        constexpr ilqgames::Time kPlannerRuntime = 0.25;  // s
+        constexpr ilqgames::Time kFinalTime = 20.0;       // DEFAULT: 10 s -> CANNOT BE CHANGED ?!
+        constexpr ilqgames::Time kPlannerRuntime = 0.15;  // DEFAULT: 0.25 s
+        constexpr ilqgames::Time kExtraTime = 0.05;  // DEFAULT: 0.25 s
         const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs =
-            ilqgames::RecedingHorizonSimulator(kFinalTime, kPlannerRuntime, &solver);
+            ilqgames_planning::RecedingHorizonSimulator(kFinalTime, kPlannerRuntime, kExtraTime, &solver); // using customized simulator
+
+        // Dump the logs and/or exit
+        if (FLAGS_save) {
+            std::string new_dir;
+            if (fs::is_empty(ILQGAMES_LOG_DIR))
+                new_dir = FLAGS_experiment_name + "_receding_0";
+            else
+                new_dir = FLAGS_experiment_name + "_receding_" + std::to_string(find_max_idx_in_dir(ILQGAMES_LOG_DIR)+1);
+
+            int i = 0;
+            for (auto &log : logs) {
+                if (FLAGS_experiment_name == "") {
+                    CHECK(log->Save(FLAGS_last_traj));
+
+                } else {
+                    if (i == 0)
+                        CHECK(log->Save(FLAGS_last_traj, new_dir + "_iter_0"));
+                    else
+                        CHECK(log->Save(FLAGS_last_traj, new_dir + "_iter_" + std::to_string(i)));
+                }
+                i++;
+            }
+            pack_dirs(new_dir, ILQGAMES_LOG_DIR);
+        }
     }
 
     return 0;
 }
 
 
-int find_max_idx_in_logdir() {
+int find_max_idx_in_dir(const std::string dir) {
     std::regex rgx("_[^_]+$");
     std::smatch match;
     std::string idx_str;
     int max_idx = 0;
     std::vector<int> idxs = {};
 
-    for (const auto & entry : fs::directory_iterator(ILQGAMES_LOG_DIR)) {
+    for (const auto & entry : fs::directory_iterator(dir)) {
         const std::string filename = entry.path().c_str();
 //                    std::cout << filename << std::endl;
 
@@ -158,4 +182,37 @@ int find_max_idx_in_logdir() {
         }
     }
     return *max_element(idxs.begin(), idxs.end());
+}
+
+
+void pack_dirs(const std::string common_string, const std::string current_dir) {
+
+    fs::create_directory(common_string);
+
+    int i = 0;
+    for (const auto & entry : fs::directory_iterator(current_dir)) {
+        const std::string dir_to_move = entry.path().string();
+        const std::string filename = entry.path().filename();
+
+        if (dir_to_move.find(common_string) != std::string::npos) {
+            std::string dest_dir = current_dir + fs::path::preferred_separator + common_string;
+            std::string command = "mv " + dir_to_move + " " + dest_dir;
+//            std::cout << command << std::endl;
+            system(command.c_str());
+
+            // Remove dir created during first iteration (written "/0" instead of full path)
+            if (i == 0) {
+                std::string new_dir = current_dir + fs::path::preferred_separator + common_string + fs::path::preferred_separator + filename;
+                std::string old_dir = dest_dir + fs::path::preferred_separator + "0";
+                fs::create_directory(new_dir);
+                std::string command = "mv " + old_dir + fs::path::preferred_separator + "* " + new_dir;
+//                std::cout << command << std::endl;
+                system(command.c_str());
+
+                command = "rm -r " + old_dir;
+                system(command.c_str());
+            }
+        }
+        i++;
+    }
 }

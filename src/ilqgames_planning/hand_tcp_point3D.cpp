@@ -24,29 +24,29 @@ namespace {
 //static constexpr float kRobotTcpMaxAz = 50.0;  // m/s^2
 
 // Cost weights
-static constexpr float kHumanHandGoalXCost = 1.0;
-static constexpr float kHumanHandGoalYCost = 1.0;
-static constexpr float kHumanHandGoalZCost = 1.0;
+static constexpr float kHumanHandGoalXCost = 100.0;
+static constexpr float kHumanHandGoalYCost = 100.0;
+static constexpr float kHumanHandGoalZCost = 100.0;
 
-static constexpr float kRobotTcpGoalXCost = 0.0;
-static constexpr float kRobotTcpGoalYCost = 0.0;
-static constexpr float kRobotTcpGoalZCost = 0.0;
+static constexpr float kRobotTcpGoalXCost = 100.0;
+static constexpr float kRobotTcpGoalYCost = 100.0;
+static constexpr float kRobotTcpGoalZCost = 100.0;
 
-static constexpr float kHumanHandGoalVxCost = 0.0;
-static constexpr float kHumanHandGoalVyCost = 0.0;
-static constexpr float kHumanHandGoalVzCost = 0.0;
+static constexpr float kHumanHandGoalVxCost = 110.0;
+static constexpr float kHumanHandGoalVyCost = 110.0;
+static constexpr float kHumanHandGoalVzCost = 110.0;
 
-static constexpr float kRobotTcpGoalVxCost = 0.0;
-static constexpr float kRobotTcpGoalVyCost = 0.0;
-static constexpr float kRobotTcpGoalVzCost = 0.0;
+static constexpr float kRobotTcpGoalVxCost = 110.0;
+static constexpr float kRobotTcpGoalVyCost = 110.0;
+static constexpr float kRobotTcpGoalVzCost = 110.0;
 
-static constexpr float kHumanHandAccXCost = 0.0;
-static constexpr float kHumanHandAccYCost = 0.0;
-static constexpr float kHumanHandAccZCost = 0.0;
+static constexpr float kHumanHandAccXCost = 1.0;
+static constexpr float kHumanHandAccYCost = 1.0;
+static constexpr float kHumanHandAccZCost = 1.0;
 
-static constexpr float kRobotTcpAccXCost = 0.0;
-static constexpr float kRobotTcpAccYCost = 0.0;
-static constexpr float kRobotTcpAccZCost = 0.0;
+static constexpr float kRobotTcpAccXCost = 1.0;
+static constexpr float kRobotTcpAccYCost = 1.0;
+static constexpr float kRobotTcpAccZCost = 1.0;
 
 static constexpr float kProximityCostWeight = 0.0;
 
@@ -77,8 +77,8 @@ static constexpr float kHumanHandTargetY = -2.0;    // m
 static constexpr float kHumanHandTargetZ = -2.0;    // m
 
 static constexpr float kRobotTcpTargetX = 4.0;      // m
-static constexpr float kRobotTcpTargetY = 4.0;      // m
-static constexpr float kRobotTcpTargetZ = 4.0;      // m
+static constexpr float kRobotTcpTargetY = 5.0;      // m
+static constexpr float kRobotTcpTargetZ = 3.0;      // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s
@@ -172,28 +172,28 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     robotTcp_cost.AddStateCost(robotTcp_goalZ_cost);
 
 
-//    // Quadratic state costs for target velocity
-//    const auto humanHand_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandGoalVxCost, kHumanHandVxIdx, kHumanHandTargetVx, "humanHand_goalVx_cost");
-//    const auto humanHand_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandGoalVyCost, kHumanHandVyIdx, kHumanHandTargetVy, "humanHand_goalVy_cost");
-//    const auto humanHand_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandGoalVzCost, kHumanHandVzIdx, kHumanHandTargetVz, "humanHand_goalVz_cost");
+    // Quadratic state costs for target velocity
+    const auto humanHand_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+        kHumanHandGoalVxCost, kHumanHandVxIdx, kHumanHandTargetVx, "humanHand_goalVx_cost");
+    const auto humanHand_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+        kHumanHandGoalVyCost, kHumanHandVyIdx, kHumanHandTargetVy, "humanHand_goalVy_cost");
+    const auto humanHand_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+        kHumanHandGoalVzCost, kHumanHandVzIdx, kHumanHandTargetVz, "humanHand_goalVz_cost");
 
-//    humanHand_cost.AddStateCost(humanHand_goalVx_cost);
-//    humanHand_cost.AddStateCost(humanHand_goalVy_cost);
-//    humanHand_cost.AddStateCost(humanHand_goalVz_cost);
+    humanHand_cost.AddStateCost(humanHand_goalVx_cost);
+    humanHand_cost.AddStateCost(humanHand_goalVy_cost);
+    humanHand_cost.AddStateCost(humanHand_goalVz_cost);
 
-//    const auto robotTcp_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpGoalVxCost, kRobotTcpVxIdx, kRobotTcpTargetVx, "robotTcp_goalVx_cost");
-//    const auto robotTcp_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpGoalVyCost, kRobotTcpVyIdx, kRobotTcpTargetVy, "robotTcp_goalVy_cost");
-//    const auto robotTcp_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpGoalVzCost, kRobotTcpVzIdx, kRobotTcpTargetVz, "robotTcp_goalVz_cost");
+    const auto robotTcp_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+        kRobotTcpGoalVxCost, kRobotTcpVxIdx, kRobotTcpTargetVx, "robotTcp_goalVx_cost");
+    const auto robotTcp_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+        kRobotTcpGoalVyCost, kRobotTcpVyIdx, kRobotTcpTargetVy, "robotTcp_goalVy_cost");
+    const auto robotTcp_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+        kRobotTcpGoalVzCost, kRobotTcpVzIdx, kRobotTcpTargetVz, "robotTcp_goalVz_cost");
 
-//    robotTcp_cost.AddStateCost(robotTcp_goalVx_cost);
-//    robotTcp_cost.AddStateCost(robotTcp_goalVy_cost);
-//    robotTcp_cost.AddStateCost(robotTcp_goalVz_cost);
+    robotTcp_cost.AddStateCost(robotTcp_goalVx_cost);
+    robotTcp_cost.AddStateCost(robotTcp_goalVy_cost);
+    robotTcp_cost.AddStateCost(robotTcp_goalVz_cost);
 
 
     // Quadratic control costs
@@ -219,6 +219,8 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     robotTcp_cost.AddControlCost(1, robotTcp_accY_cost);
     robotTcp_cost.AddControlCost(1, robotTcp_accZ_cost);
 
+
+    // State constraints (???)
 
     // Constrain each control input to lie in a (symmetrical) range.
 //    const auto humanHand_accX_max_constraint = std::make_shared<ilqgames::SingleDimensionConstraint>(
@@ -262,16 +264,16 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //    robotTcp_cost.AddControlConstraint(1, robotTcp_accZ_min_constraint);
 
 
-//    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
-//    constexpr float kMinProximity = 1;  // m
-//    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
-//        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
-//                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
-//                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
-//                                               kMinProximity, "Proximity"));
+    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
+    constexpr float kMinProximity = 1;  // m
+    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
+        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
+                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
+                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
+                                               kMinProximity, "Proximity"));
 
-//    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
-//    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
+    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
+    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
 
 
 //    // Encourage each player to go a given nominal speed.
@@ -303,6 +305,27 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //      new QuadraticPolyline2Cost(kLaneCostWeight, lane2, {kP2XIdx, kP2YIdx},
 //                                 "LaneCenter"));
 //    p2_cost.AddStateCost(p2_lane_cost);
+
+//    // Cost on final time
+//    constexpr float kFinalTimeWindow = 0.5;  // s
+//    const auto p1_goalx_cost = std::make_shared<FinalTimeCost>(
+//        std::make_shared<QuadraticCost>(kGoalCostWeight, kP1XIdx, kP1GoalX),
+//        time::kTimeHorizon - kFinalTimeWindow, "GoalX");
+//    const auto p1_goaly_cost = std::make_shared<FinalTimeCost>(
+//        std::make_shared<QuadraticCost>(kGoalCostWeight, kP1YIdx, kP1GoalY),
+//        time::kTimeHorizon - kFinalTimeWindow, "GoalY");
+//    p1_cost.AddStateCost(p1_goalx_cost);
+//    p1_cost.AddStateCost(p1_goaly_cost);
+
+//    const auto p2_goalx_cost = std::make_shared<FinalTimeCost>(
+//        std::make_shared<QuadraticCost>(kGoalCostWeight, kP2XIdx, kP2GoalX),
+//        time::kTimeHorizon - kFinalTimeWindow, "GoalX");
+//    const auto p2_goaly_cost = std::make_shared<FinalTimeCost>(
+//        std::make_shared<QuadraticCost>(kGoalCostWeight, kP2YIdx, kP2GoalY),
+//        time::kTimeHorizon - kFinalTimeWindow, "GoalY");
+//    p2_cost.AddStateCost(p2_goalx_cost);
+//    p2_cost.AddStateCost(p2_goaly_cost);
+
 }
 
 inline std::vector<float> HandTcpPoint3D::Xs(const Eigen::VectorXf& x) const {

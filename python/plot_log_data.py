@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 sns.set_theme(context="paper", style="whitegrid")
 
 LOG_DIRECTORY = "../logs/"
-EXAMPLE_LOGDIR = "hand_tcp_point3D_0"
+EXAMPLE_LOGDIR = "hand_tcp_point3D_13"
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
