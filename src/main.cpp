@@ -26,14 +26,14 @@ DEFINE_bool(open_loop, false, "Use open loop (vs. feedback) solver.");
 DEFINE_bool(receding_horizon, false, "Solve in a receding horizon fashion.");
 
 // Regularization.
-DEFINE_double(state_regularization, 1.0, "State regularization.");
-DEFINE_double(control_regularization, 1.0, "Control regularization.");
+//DEFINE_double(state_regularization, 1.0, "State regularization.");
+//DEFINE_double(control_regularization, 1.0, "Control regularization.");
 
 // Linesearch parameters.
-DEFINE_bool(linesearch, true, "Should the solver linesearch?"); //DEFAULT: true
-DEFINE_double(initial_alpha_scaling, 0.25, "Initial step size in linesearch.");
-DEFINE_double(convergence_tolerance, 0.1, "KKT squared error tolerance.");
-DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter.");
+//DEFINE_bool(linesearch, true, "Should the solver linesearch?"); //DEFAULT: true
+//DEFINE_double(initial_alpha_scaling, 0.25, "Initial step size in linesearch."); //DEFAULT: 0.25
+//DEFINE_double(convergence_tolerance, 0.1, "KKT squared error tolerance."); //DEFAULT: 0.1
+//DEFINE_double(expected_decrease, 0.1, "KKT sq err expected decrease per iter."); //DEFAULT: 0.1
 
 int find_max_idx_in_dir(const std::string dir); // custom function to find the maximum index in a given directory
 void pack_dirs(const std::string common_string, const std::string dir);
@@ -51,17 +51,44 @@ int main(int argc, char **argv) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     FLAGS_logtostderr = true;
 
-    // Set ilqgames solver parameters
+    // === Set ilqgames solver parameters === //
     ilqgames::SolverParams params;
-    params.max_backtracking_steps = 1000; //DEFAULT: 100
-    params.unconstrained_solver_max_iters = 100; //DEFAULT: 10
-    params.linesearch = FLAGS_linesearch;
-    params.expected_decrease_fraction = FLAGS_expected_decrease;
-    params.initial_alpha_scaling = FLAGS_initial_alpha_scaling;
-    params.convergence_tolerance = FLAGS_convergence_tolerance;
-    params.state_regularization = FLAGS_state_regularization;
-    params.control_regularization = FLAGS_control_regularization;
+
+    // Consider a solution converged once max elementwise difference is below this
+    // tolerance or solver has exceeded a maximum number of iterations.
+    params.convergence_tolerance = 1e-5;
+    params.max_solver_iters = 100;
+
+    // Linesearch parameters. If flag is set 'true', then applied initial alpha
+    // scaling to all strategies and backs off geometrically at the given rate for
+    // the specified number of steps.
+    params.linesearch = true;
+    params.initial_alpha_scaling = 0.98;
+    params.geometric_alpha_scaling = 0.01;
+    params.max_backtracking_steps = 500;
+    params.expected_decrease_fraction = 0.1;
+
+    // Whether solver should shoot for an open loop or feedback Nash.
     params.open_loop = FLAGS_open_loop;
+
+    // State and control regularization.
+    params.state_regularization = 1.0;
+    params.control_regularization = 1.0;
+
+    // Augmented Lagrangian parameters.
+    params.unconstrained_solver_max_iters = 100;
+    params.geometric_mu_scaling = 1.1;
+    params.geometric_mu_downscaling = 0.5;
+    params.geometric_lambda_downscaling = 0.5;
+    params.constraint_error_tolerance = 1e-1;
+
+    // Should the solver reset problem/constraint params to their initial values.
+    // NOTE: defaults to true.
+    params.reset_problem = true;
+    params.reset_lambdas = true;
+    params.reset_mu = true;
+
+    // === END Set ilqgames solver parameters === //
 
     // Solve for feedback equilibrium
     auto problem = std::make_shared<ilqgames_planning::HandTcpPoint3D>();
@@ -91,20 +118,20 @@ int main(int argc, char **argv) {
         for (const float c : total_costs)
             LOG(INFO) << c;
 
-        // Check if solution satisfies sufficient conditions for being a local Nash
-        LOG(INFO) << "Check sufficient condition for local Nash equilibrium";
+//        // Check if solution satisfies sufficient condition for being a local Nash [NOT WORKING]
+//        LOG(INFO) << "Checking sufficient condition for local Nash equilibrium...";
+//        const bool sufficient_cond_local_nash = ilqgames::CheckSufficientLocalNashEquilibrium(*problem);
+//        if (sufficient_cond_local_nash)
+//            LOG(INFO) << "Solution is a local Nash.";
+//        else
+//            LOG(INFO) << "Solution may not be a local Nash.";
 
-        const bool may_be_local_nash = ilqgames::CheckSufficientLocalNashEquilibrium(*problem);
-        if (may_be_local_nash)
-            LOG(INFO) << "Solution is a local Nash.";
-        else
-            LOG(INFO) << "Solution may not be a local Nash.";
-
-        LOG(INFO) << "Numerical check for local Nash equilibrium";
-        constexpr float kMaxPerturbation = 0.1;
-        const bool is_local_nash = NumericalCheckLocalNashEquilibrium(
+        // Check if solution satisfies numerical condition for being a local Nash
+        LOG(INFO) << "Checking numerical condition for local Nash equilibrium...";
+        constexpr float kMaxPerturbation = 1e-10;
+        const bool is_numerical_local_nash = NumericalCheckLocalNashEquilibrium(
             *problem, kMaxPerturbation, false);
-        if (is_local_nash)
+        if (is_numerical_local_nash)
             LOG(INFO) << "Feedback solution is a local Nash.";
         else
             LOG(INFO) << "Feedback solution is not a local Nash.";
@@ -129,9 +156,9 @@ int main(int argc, char **argv) {
 
     else {
         // Solve the game (receding horizon)
-        constexpr ilqgames::Time kFinalTime = 20.0;       // DEFAULT: 10 s -> CANNOT BE CHANGED ?!
-        constexpr ilqgames::Time kPlannerRuntime = 0.15;  // DEFAULT: 0.25 s
-        constexpr ilqgames::Time kExtraTime = 0.05;  // DEFAULT: 0.25 s
+        constexpr ilqgames::Time kFinalTime = 10.0;       // DEFAULT: 10 s -> CANNOT BE CHANGED ?!
+        constexpr ilqgames::Time kPlannerRuntime = 0.25;  // DEFAULT: 0.25 s
+        constexpr ilqgames::Time kExtraTime = 0.25;       // DEFAULT: 0.25 s
         const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs =
             ilqgames_planning::RecedingHorizonSimulator(kFinalTime, kPlannerRuntime, kExtraTime, &solver); // using customized simulator
 

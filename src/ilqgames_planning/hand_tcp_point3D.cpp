@@ -24,44 +24,44 @@ namespace {
 //static constexpr float kRobotTcpMaxAz = 50.0;  // m/s^2
 
 // Cost weights
-static constexpr float kHumanHandGoalXCost = 100.0;
-static constexpr float kHumanHandGoalYCost = 100.0;
-static constexpr float kHumanHandGoalZCost = 100.0;
+static constexpr float kHumanHandGoalXCost = 1.0;
+static constexpr float kHumanHandGoalYCost = 1.0;
+static constexpr float kHumanHandGoalZCost = 1.0;
 
-static constexpr float kRobotTcpGoalXCost = 100.0;
-static constexpr float kRobotTcpGoalYCost = 100.0;
-static constexpr float kRobotTcpGoalZCost = 100.0;
+static constexpr float kRobotTcpGoalXCost = 1.0;
+static constexpr float kRobotTcpGoalYCost = 1.0;
+static constexpr float kRobotTcpGoalZCost = 1.0;
 
-static constexpr float kHumanHandGoalVxCost = 110.0;
-static constexpr float kHumanHandGoalVyCost = 110.0;
-static constexpr float kHumanHandGoalVzCost = 110.0;
+static constexpr float kHumanHandGoalVxCost = 1.0;
+static constexpr float kHumanHandGoalVyCost = 1.0;
+static constexpr float kHumanHandGoalVzCost = 1.0;
 
-static constexpr float kRobotTcpGoalVxCost = 110.0;
-static constexpr float kRobotTcpGoalVyCost = 110.0;
-static constexpr float kRobotTcpGoalVzCost = 110.0;
+static constexpr float kRobotTcpGoalVxCost = 1.0;
+static constexpr float kRobotTcpGoalVyCost = 1.0;
+static constexpr float kRobotTcpGoalVzCost = 1.0;
 
-static constexpr float kHumanHandAccXCost = 1.0;
 static constexpr float kHumanHandAccYCost = 1.0;
 static constexpr float kHumanHandAccZCost = 1.0;
+static constexpr float kHumanHandAccXCost = 1.0;
 
 static constexpr float kRobotTcpAccXCost = 1.0;
 static constexpr float kRobotTcpAccYCost = 1.0;
 static constexpr float kRobotTcpAccZCost = 1.0;
 
-static constexpr float kProximityCostWeight = 0.0;
+static constexpr float kProximityCostWeight = 100.0; -CHECK: NOT WORKING!
 
 //// Nominal speed
 //static constexpr float kHumanHandNominalV = 3.0;    // m/s
 //static constexpr float kRobotTcpNominalV = 4.0;     // m/s
 
 // Initial state
-static constexpr float kHumanHandInitialX = 1.0;    // m
-static constexpr float kHumanHandInitialY = 1.0;    // m
-static constexpr float kHumanHandInitialZ = 1.0;    // m
+static constexpr float kHumanHandInitialX = 10.0;    // m
+static constexpr float kHumanHandInitialY = 10.0;    // m
+static constexpr float kHumanHandInitialZ = 10.0;    // m
 
-static constexpr float kRobotTcpInitialX = -1.0;    // m
-static constexpr float kRobotTcpInitialY = -1.0;     // m
-static constexpr float kRobotTcpInitialZ = -1.0;     // m
+static constexpr float kRobotTcpInitialX = -10.0;    // m
+static constexpr float kRobotTcpInitialY = -10.0;    // m
+static constexpr float kRobotTcpInitialZ = -10.0;    // m
 
 static constexpr float kHumanHandInitialVx = 0.0;   // m/s
 static constexpr float kHumanHandInitialVy = 0.0;   // m/s
@@ -72,13 +72,13 @@ static constexpr float kRobotTcpInitialVy = 0.0;    // m/s
 static constexpr float kRobotTcpInitialVz = 0.0;    // m/s
 
 // Target state
-static constexpr float kHumanHandTargetX = -2.0;    // m
-static constexpr float kHumanHandTargetY = -2.0;    // m
-static constexpr float kHumanHandTargetZ = -2.0;    // m
+static constexpr float kHumanHandTargetX = -10.0;    // m
+static constexpr float kHumanHandTargetY = -10.0;    // m
+static constexpr float kHumanHandTargetZ = -10.0;    // m
 
-static constexpr float kRobotTcpTargetX = 4.0;      // m
+static constexpr float kRobotTcpTargetX = 5.0;      // m
 static constexpr float kRobotTcpTargetY = 5.0;      // m
-static constexpr float kRobotTcpTargetZ = 3.0;      // m
+static constexpr float kRobotTcpTargetZ = 5.0;      // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s
@@ -93,17 +93,17 @@ using HumanHand = PointPlayer3D;
 using RobotTcp = PointPlayer3D;
 
 static const ilqgames::Dimension kHumanHandXIdx = HumanHand::kPxIdx;
-static const ilqgames::Dimension kHumanHandYIdx = HumanHand::kPyIdx;
-static const ilqgames::Dimension kHumanHandZIdx = HumanHand::kPzIdx;
 static const ilqgames::Dimension kHumanHandVxIdx = HumanHand::kVxIdx;
+static const ilqgames::Dimension kHumanHandYIdx = HumanHand::kPyIdx;
 static const ilqgames::Dimension kHumanHandVyIdx = HumanHand::kVyIdx;
+static const ilqgames::Dimension kHumanHandZIdx = HumanHand::kPzIdx;
 static const ilqgames::Dimension kHumanHandVzIdx = HumanHand::kVzIdx;
 
 static const ilqgames::Dimension kRobotTcpXIdx = HumanHand::kNumXDims + RobotTcp::kPxIdx;
-static const ilqgames::Dimension kRobotTcpYIdx = HumanHand::kNumXDims + RobotTcp::kPyIdx;
-static const ilqgames::Dimension kRobotTcpZIdx = HumanHand::kNumXDims + RobotTcp::kPzIdx;
 static const ilqgames::Dimension kRobotTcpVxIdx = HumanHand::kNumXDims + RobotTcp::kVxIdx;
+static const ilqgames::Dimension kRobotTcpYIdx = HumanHand::kNumXDims + RobotTcp::kPyIdx;
 static const ilqgames::Dimension kRobotTcpVyIdx = HumanHand::kNumXDims + RobotTcp::kVyIdx;
+static const ilqgames::Dimension kRobotTcpZIdx = HumanHand::kNumXDims + RobotTcp::kPzIdx;
 static const ilqgames::Dimension kRobotTcpVzIdx = HumanHand::kNumXDims + RobotTcp::kVzIdx;
 
 }  // anonymous namespace
@@ -113,6 +113,9 @@ void HandTcpPoint3D::ConstructDynamics() {
     dynamics_.reset(new ilqgames::ConcatenatedDynamicalSystem(
                     {std::make_shared<HumanHand>(),
                      std::make_shared<RobotTcp>()}));
+
+//    dynamics_.reset(new ilqgames::ConcatenatedDynamicalSystem(
+//                    {std::make_shared<HumanHand>()}));
 }
 
 void HandTcpPoint3D::ConstructInitialState() {
@@ -121,17 +124,17 @@ void HandTcpPoint3D::ConstructInitialState() {
     x0_ = Eigen::VectorXf::Zero(dynamics_->XDim());
 
     x0_(kHumanHandXIdx) = kHumanHandInitialX;
-    x0_(kHumanHandYIdx) = kHumanHandInitialY;
-    x0_(kHumanHandZIdx) = kHumanHandInitialZ;
     x0_(kHumanHandVxIdx) = kHumanHandInitialVx;
+    x0_(kHumanHandYIdx) = kHumanHandInitialY;
     x0_(kHumanHandVyIdx) = kHumanHandInitialVy;
+    x0_(kHumanHandZIdx) = kHumanHandInitialZ;
     x0_(kHumanHandVzIdx) = kHumanHandInitialVz;
 
     x0_(kRobotTcpXIdx) = kRobotTcpInitialX;
-    x0_(kRobotTcpYIdx) = kRobotTcpInitialY;
-    x0_(kRobotTcpZIdx) = kRobotTcpInitialZ;
     x0_(kRobotTcpVxIdx) = kRobotTcpInitialVx;
+    x0_(kRobotTcpYIdx) = kRobotTcpInitialY;
     x0_(kRobotTcpVyIdx) = kRobotTcpInitialVy;
+    x0_(kRobotTcpZIdx) = kRobotTcpInitialZ;
     x0_(kRobotTcpVzIdx) = kRobotTcpInitialVz;
 }
 
@@ -219,6 +222,17 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     robotTcp_cost.AddControlCost(1, robotTcp_accY_cost);
     robotTcp_cost.AddControlCost(1, robotTcp_accZ_cost);
 
+    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
+    constexpr float kMinProximity = 1;  // m
+    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
+        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
+                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
+                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
+                                               kMinProximity, "Proximity"));
+
+    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
+    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
+
 
     // State constraints (???)
 
@@ -264,16 +278,7 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //    robotTcp_cost.AddControlConstraint(1, robotTcp_accZ_min_constraint);
 
 
-    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
-    constexpr float kMinProximity = 1;  // m
-    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
-        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
-                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
-                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
-                                               kMinProximity, "Proximity"));
 
-    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
-    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
 
 
 //    // Encourage each player to go a given nominal speed.

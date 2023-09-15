@@ -8,10 +8,12 @@ import matplotlib.pyplot as plt
 sns.set_theme(context="paper", style="whitegrid")
 
 LOG_DIRECTORY = "../logs/"
-EXAMPLE_LOGDIR = "hand_tcp_point3D_13"
+EXAMPLE_LOGDIR = "hand_tcp_point3D_45" # to test single iteration
+EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_0" # to test full trajectory along receding horizon
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
+RECEDING_HORIZON = False
 
 
 def parse_txt(filename):
@@ -45,7 +47,10 @@ def sort_dict(dictionary):
     sorted_dictionary = {i : dictionary[i] for i in keys}
 
     for entry in dictionary.items():
-        element = entry[1][0]
+        if RECEDING_HORIZON:
+            element = entry[1]
+        else:
+            element = entry[1][0]
         if isinstance(element, dict):
             sorted_element = sort_dict(element)
             sorted_dictionary[entry[0]] = sorted_element
@@ -69,7 +74,12 @@ def plot_states(states):
     ax.set_title("States [OP: " + str(max_operating_point) + "]")
 
     df = array2df(states[max_operating_point])
-    df.columns = ['x_0', 'vx_0', 'y_0', 'vy_0', 'z_0', 'vz_0','x_1', 'vx_1', 'y_1', 'vy_1', 'z_1', 'vz_1']
+    column_names = []
+    for i in range(N_AGENTS):
+        column_names += ['x_'+str(i), 'vx_'+str(i), 'y_'+str(i), 'vy_'+str(i), 'z_'+str(i), 'vz_'+str(i)]
+
+    df.columns = column_names
+    df.columns = df.columns.map('_'.join)
     
     sns.lineplot(ax=ax, data=df)
     plt.legend(loc='upper right')
@@ -91,13 +101,14 @@ def plot_traj_3d(states):
                ys=states[max_operating_point][0][0,2],
                zs=states[max_operating_point][0][0,4], c='r', marker='o', label='Human hand')
     
-    # Agent 2 (Robot Tcp)
-    ax.plot(xs=states[max_operating_point][0][:,6],
-                        ys=states[max_operating_point][0][:,8],
-                        zs=states[max_operating_point][0][:,10], marker='o', markersize=0.75)
-    ax.scatter(xs=states[max_operating_point][0][0,6],
-               ys=states[max_operating_point][0][0,8],
-               zs=states[max_operating_point][0][0,10], c='g', marker='o', label='Robot TCP')
+    if N_AGENTS > 1:
+        # Agent 2 (Robot Tcp)
+        ax.plot(xs=states[max_operating_point][0][:,6],
+                            ys=states[max_operating_point][0][:,8],
+                            zs=states[max_operating_point][0][:,10], marker='o', markersize=0.75)
+        ax.scatter(xs=states[max_operating_point][0][0,6],
+                ys=states[max_operating_point][0][0,8],
+                zs=states[max_operating_point][0][0,10], c='g', marker='o', label='Robot TCP')
     
     # setting title and labels
     ax.set_title("States [OP: " + str(max_operating_point) + "]")
@@ -113,7 +124,11 @@ def plot_traj_3d(states):
 def plot_control_inputs(control_inputs):
     max_operating_point = max(control_inputs.keys()) # plot only the last operating point
 
-    fig, axs = plt.subplots(nrows=N_AGENTS, ncols=1, sharex=True)
+    if N_AGENTS == 1:
+        fig = plt.figure()
+    else:
+        fig, axs = plt.subplots(nrows=N_AGENTS, ncols=1, sharex=True)
+
     fig.suptitle('Control inputs [OP: ' + str(max_operating_point) + ']')
     fig.canvas.manager.set_window_title('Control inputs')
 
@@ -122,8 +137,13 @@ def plot_control_inputs(control_inputs):
         df = array2df(control_inputs[max_operating_point][agent])
         df.columns = ['ax', 'ay', 'az']
         
-        axs[i].set_title('Agent: ' + agent)
-        sns.lineplot(ax=axs[i], data=df)
+        if N_AGENTS == 1:
+            ax = fig.add_subplot()
+            ax.set_title('Agent: ' + agent)
+            sns.lineplot(ax=ax, data=df)
+        else:
+            axs[i].set_title('Agent: ' + agent)
+            sns.lineplot(ax=axs[i], data=df)
                      
         i += 1
 
@@ -131,11 +151,72 @@ def plot_control_inputs(control_inputs):
     plt.draw()
 
 
-def main():
-    path_to_logfile = os.path.join(LOG_DIRECTORY, EXAMPLE_LOGDIR)
+def plot_traj_3d_receding(states):
+    
+    actual_states = []
+    for entry in states.values():
+        actual_states.append(entry[0][0].tolist())
+    actual_states = np.asarray(actual_states)
+    
+    fig = plt.figure('3D trajectories - Receding horizon')
+    ax = fig.add_subplot(projection='3d')
 
-    gen_dir = os.walk(path_to_logfile)
-    dirs = [x[0] for x in gen_dir][1:]
+    # Agent 1 (Human Hand)
+    ax.plot(xs=actual_states[:,0], ys=actual_states[:,2], zs=actual_states[:,4], marker='o', markersize=1)
+    ax.scatter(xs=actual_states[0,0], ys=actual_states[0,2], zs=actual_states[0,4], c='r', marker='o', label='Human hand')
+    
+    if N_AGENTS > 1:
+        # Agent 2 (Robot Tcp)
+        ax.plot(xs=actual_states[:,6], ys=actual_states[:,8], zs=actual_states[:,10], marker='o', markersize=0.75, alpha=0.5)
+        ax.scatter(xs=actual_states[0,6], ys=actual_states[0,8], zs=actual_states[0,10], c='g', marker='o', label='Robot TCP')
+    
+    # setting title and labels
+    ax.set_title("Evolution of the state")
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    ax.set_xlabel('x')
+    ax.legend()
+    plt.legend(loc='upper right')
+
+    plt.draw()
+
+
+def add_iteration_data(dir, control_inputs, states, t0s, runtimes, costs, operating_point):
+    add_element_to_dict(control_inputs, operating_point, {})
+                        
+    gen_files = os.walk(dir)
+    files = [x[2] for x in gen_files][0]
+
+    for file in files:
+        full_path_file = os.path.join(dir,file)
+        data = parse_txt(full_path_file)
+
+        if file == 'xs.txt':
+            add_element_to_dict(states, operating_point, data)
+        elif file[0] == 'u':
+            agent_number = file[1:-4]
+            add_element_to_dict(control_inputs[operating_point][0], ('agent_' + agent_number), data)
+        elif file == 't0.txt':
+            add_element_to_dict(t0s, operating_point, data)
+        elif file == 'cumulative_runtimes.txt':
+            add_element_to_dict(runtimes, operating_point, data)
+        elif file == 'costs.txt':
+            add_element_to_dict(costs, operating_point, data)
+
+
+def main():
+    if RECEDING_HORIZON:
+        path_to_logfile = os.path.join(LOG_DIRECTORY, EXAMPLE_LOGDIR_RECEDING)
+        gen_dir = os.walk(path_to_logfile)
+        dirs = [x[0] for x in gen_dir if ("iter" in x[0].split('/')[-1])][1:]
+    else:
+        path_to_logfile = os.path.join(LOG_DIRECTORY, EXAMPLE_LOGDIR)
+        gen_dir = os.walk(path_to_logfile)
+        dirs = [x[0] for x in gen_dir][1:]
+
+    if not dirs:
+        print("No log files found in directory " + path_to_logfile + ". Directory must contain at least one subdirectory with log files.")
+        return
 
     costs = {}
     states = {}
@@ -143,42 +224,50 @@ def main():
     t0s = {}
     runtimes = {}
 
-    if not dirs:
-        print("No log files found in directory " + path_to_logfile + ". Directory must contain at least one subdirectory with log files.")
-        return
+    if RECEDING_HORIZON:
+        for dir in dirs:
+            gen_subdir = os.walk(dir)
+            subdirs = [x[0] for x in gen_subdir][1:]
 
-    for dir in dirs:
-        operating_point = int(dir.split('/')[-1])
-        add_element_to_dict(control_inputs, operating_point, {})
-                            
-        gen_files = os.walk(dir)
-        files = [x[2] for x in gen_files][0]
+            operating_point = int(dir.split('_')[-1])
 
-        for file in files:
-            full_path_file = os.path.join(dir,file)
-            data = parse_txt(full_path_file)
+            if subdirs:
+                latest_operating_point = 0
+                for subdir in subdirs:
+                    latest_subdir = int(subdir.split('/')[-1])
+                    if latest_subdir > latest_operating_point:
+                        latest_operating_point = latest_subdir
+                
+                
+                selected_dir = dir + '/' + str(latest_operating_point)
+                add_iteration_data(selected_dir, control_inputs, states, t0s, runtimes, costs, operating_point)
 
-            if file == 'xs.txt':
-                add_element_to_dict(states, operating_point, data)
-            elif file[0] == 'u':
-                agent_number = file[1:-4]
-                add_element_to_dict(control_inputs[operating_point][0], ('agent_' + agent_number), data)
-            elif file == 't0.txt':
-                add_element_to_dict(t0s, operating_point, data)
-            elif file == 'cumulative_runtimes.txt':
-                add_element_to_dict(runtimes, operating_point, data)
-            elif file == 'costs.txt':
-                add_element_to_dict(costs, operating_point, data)
+            else:
+                add_iteration_data(dir, control_inputs, states, t0s, runtimes, costs, operating_point)
 
-    costs = sort_dict(costs)
-    states = sort_dict(states)
-    control_inputs = sort_dict(control_inputs)
-    t0s = sort_dict(t0s)
-    runtimes = sort_dict(runtimes)
+        costs = sort_dict(costs)
+        states = sort_dict(states)
+        control_inputs = sort_dict(control_inputs)
+        t0s = sort_dict(t0s)
+        runtimes = sort_dict(runtimes)
 
-    plot_traj_3d(states)
-    plot_states(states)
-    plot_control_inputs(control_inputs)
+        plot_traj_3d_receding(states)
+
+    else:
+        for dir in dirs:
+            operating_point = int(dir.split('/')[-1])
+            add_iteration_data(dir, control_inputs, states, t0s, runtimes, costs, operating_point)
+
+        costs = sort_dict(costs)
+        states = sort_dict(states)
+        control_inputs = sort_dict(control_inputs)
+        t0s = sort_dict(t0s)
+        runtimes = sort_dict(runtimes)
+
+        plot_traj_3d(states)
+        plot_states(states)
+        plot_control_inputs(control_inputs)
+    
 
     plt.show()
     pass # for debug
