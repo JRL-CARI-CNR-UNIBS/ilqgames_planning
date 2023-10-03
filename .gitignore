@@ -10,8 +10,11 @@ bin/
 # IMGUI stuff.
 imgui.ini
 
-# Logs.
-logs/
+# Logs (uncomment to ignore logs)
+# logs/
+
+# Markdown images (uncomment to ignore images used in markdown files)
+image/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

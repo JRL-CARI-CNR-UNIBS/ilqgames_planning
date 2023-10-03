@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <ilqgames_planning/point_player_3d.h>
 #include <ilqgames_planning/hand_tcp_point3D.h>
 #include <ilqgames/dynamics/concatenated_dynamical_system.h>
@@ -24,35 +25,44 @@ namespace {
 //static constexpr float kRobotTcpMaxAz = 50.0;  // m/s^2
 
 // Cost weights
-static constexpr float kHumanHandGoalXCost = 1.0;
-static constexpr float kHumanHandGoalYCost = 1.0;
-static constexpr float kHumanHandGoalZCost = 1.0;
+static constexpr float kHumanHandGoalXCost = 0.1;
+static constexpr float kHumanHandGoalYCost = 0.1;
+static constexpr float kHumanHandGoalZCost = 0.1;
 
-static constexpr float kRobotTcpGoalXCost = 1.0;
-static constexpr float kRobotTcpGoalYCost = 1.0;
-static constexpr float kRobotTcpGoalZCost = 1.0;
+static constexpr float kRobotTcpGoalXCost = 0.1;
+static constexpr float kRobotTcpGoalYCost = 0.1;
+static constexpr float kRobotTcpGoalZCost = 0.1;
 
-static constexpr float kHumanHandGoalVxCost = 1.0;
-static constexpr float kHumanHandGoalVyCost = 1.0;
-static constexpr float kHumanHandGoalVzCost = 1.0;
+static constexpr float kHumanHandGoalVxCost = 5.0;
+static constexpr float kHumanHandGoalVyCost = 5.0;
+static constexpr float kHumanHandGoalVzCost = 5.0;
 
-static constexpr float kRobotTcpGoalVxCost = 1.0;
-static constexpr float kRobotTcpGoalVyCost = 1.0;
-static constexpr float kRobotTcpGoalVzCost = 1.0;
+static constexpr float kRobotTcpGoalVxCost = 5.0;
+static constexpr float kRobotTcpGoalVyCost = 5.0;
+static constexpr float kRobotTcpGoalVzCost = 5.0;
 
-static constexpr float kHumanHandAccYCost = 1.0;
-static constexpr float kHumanHandAccZCost = 1.0;
-static constexpr float kHumanHandAccXCost = 1.0;
+static constexpr float kHumanHandNominalVxCost = 10.0;
+static constexpr float kHumanHandNominalVyCost = 10.0;
+static constexpr float kHumanHandNominalVzCost = 10.0;
 
-static constexpr float kRobotTcpAccXCost = 1.0;
-static constexpr float kRobotTcpAccYCost = 1.0;
-static constexpr float kRobotTcpAccZCost = 1.0;
+static constexpr float kRobotTcpNominalVxCost = 10.0;
+static constexpr float kRobotTcpNominalVyCost = 10.0;
+static constexpr float kRobotTcpNominalVzCost = 10.0;
 
-static constexpr float kProximityCostWeight = 100.0; -CHECK: NOT WORKING!
+static constexpr float kHumanHandAccYCost = 0.1;
+static constexpr float kHumanHandAccZCost = 0.1;
+static constexpr float kHumanHandAccXCost = 0.1;
 
-//// Nominal speed
-//static constexpr float kHumanHandNominalV = 3.0;    // m/s
-//static constexpr float kRobotTcpNominalV = 4.0;     // m/s
+static constexpr float kRobotTcpAccXCost = 0.1;
+static constexpr float kRobotTcpAccYCost = 0.1;
+static constexpr float kRobotTcpAccZCost = 0.1;
+
+static constexpr float kProximityCostWeight = 150.0;
+constexpr float kMinProximity = 0.0;  // m (threshold to activate proximity cost)
+
+// Nominal speed (the sign must be specified!)
+static constexpr float kHumanHandNominalV = -3.0;    // m/s
+static constexpr float kRobotTcpNominalV = 1.0;     // m/s
 
 // Initial state
 static constexpr float kHumanHandInitialX = 10.0;    // m
@@ -72,13 +82,13 @@ static constexpr float kRobotTcpInitialVy = 0.0;    // m/s
 static constexpr float kRobotTcpInitialVz = 0.0;    // m/s
 
 // Target state
-static constexpr float kHumanHandTargetX = -10.0;    // m
-static constexpr float kHumanHandTargetY = -10.0;    // m
-static constexpr float kHumanHandTargetZ = -10.0;    // m
+static constexpr float kHumanHandTargetX = -8.0;    // m
+static constexpr float kHumanHandTargetY = -8.0;    // m
+static constexpr float kHumanHandTargetZ = -8.0;    // m
 
-static constexpr float kRobotTcpTargetX = 5.0;      // m
-static constexpr float kRobotTcpTargetY = 5.0;      // m
-static constexpr float kRobotTcpTargetZ = 5.0;      // m
+static constexpr float kRobotTcpTargetX = 7.0;      // m
+static constexpr float kRobotTcpTargetY = 9.0;      // m
+static constexpr float kRobotTcpTargetZ = 8.0;      // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s
@@ -223,15 +233,27 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     robotTcp_cost.AddControlCost(1, robotTcp_accZ_cost);
 
     // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
-    constexpr float kMinProximity = 1;  // m
     const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
         new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
                                                {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
                                                {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
-                                               kMinProximity, "Proximity"));
+                                               kMinProximity, "proximity_cost"));
 
     humanHand_cost.AddStateCost(humanRobot_proximity_cost);
     robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
+
+    // Encourage each player to go a given nominal speed.
+    const auto humanHand_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+      kHumanHandNominalVxCost, kHumanHandVxIdx, kHumanHandNominalV, "humanHand_nominalVx_cost");
+    const auto humanHand_nominalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+      kHumanHandNominalVyCost, kHumanHandVyIdx, kHumanHandNominalV, "humanHand_nominalVy_cost");
+    const auto humanHand_nominalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+      kHumanHandNominalVzCost, kHumanHandVzIdx, kHumanHandNominalV, "humanHand_nominalVz_cost");
+
+    humanHand_cost.AddStateCost(humanHand_nominalVx_cost);
+    humanHand_cost.AddStateCost(humanHand_nominalVy_cost);
+    humanHand_cost.AddStateCost(humanHand_nominalVz_cost);
+
 
 
     // State constraints (???)
@@ -281,16 +303,7 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 
 
 
-//    // Encourage each player to go a given nominal speed.
-//    const auto humanHand_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//      kNominalVCostWeight, kP1VIdx, kP1NominalV, "NominalV");
 
-//    humanHand_cost.AddStateCost(p1_nominal_v_cost);
-
-//    const auto p2_nominal_v_cost = std::make_shared<QuadraticCost>(
-//      kNominalVCostWeight, kP2VIdx, kP2NominalV, "NominalV");
-
-//    robotTcp_cost.AddStateCost(p2_nominal_v_cost);
 
 
 //    // Encourage each player to remain near the lane center. Could also add

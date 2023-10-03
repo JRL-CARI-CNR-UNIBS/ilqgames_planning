@@ -90,6 +90,7 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
   Eigen::VectorXf x(solver->GetProblem().InitialState());
   ilqgames::Time t = splicer.CurrentOperatingPoint().t0;
 
+  int iter = 0;
   while (true) {
       // Break the loop if it's been long enough.
       // Integrate a little more.
@@ -116,7 +117,8 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
           std::chrono::duration<ilqgames::Time>(clock::now() - solver_call_time).count();
 
       CHECK_LE(elapsed_time, planner_runtime);
-      VLOG(1) << "t = " << t << ": Solved warm-started problem in "
+      iter++;
+      VLOG(1) << "iter " << iter << " | t = " << t << ": Solved warm-started problem in "
               << elapsed_time << " seconds.";
 
       // Break the loop if it's been long enough.

@@ -23,7 +23,7 @@ DEFINE_string(experiment_name, "hand_tcp_point3D", "Name for the experiment.");
 
 // Open- vs closed-loop & receding horizon
 DEFINE_bool(open_loop, false, "Use open loop (vs. feedback) solver.");
-DEFINE_bool(receding_horizon, false, "Solve in a receding horizon fashion.");
+DEFINE_bool(receding_horizon, true, "Solve in a receding horizon fashion.");
 
 // Regularization.
 //DEFINE_double(state_regularization, 1.0, "State regularization.");
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
     params.linesearch = true;
     params.initial_alpha_scaling = 0.98;
     params.geometric_alpha_scaling = 0.01;
-    params.max_backtracking_steps = 500;
+    params.max_backtracking_steps = 200;
     params.expected_decrease_fraction = 0.1;
 
     // Whether solver should shoot for an open loop or feedback Nash.
@@ -87,6 +87,11 @@ int main(int argc, char **argv) {
     params.reset_problem = true;
     params.reset_lambdas = true;
     params.reset_mu = true;
+
+    // Receding horizon parameters
+    constexpr ilqgames::Time kFinalTime = 5.0;       // DEFAULT: 10.0 s
+    constexpr ilqgames::Time kPlannerRuntime = 0.25;  // DEFAULT: 0.25 s
+    constexpr ilqgames::Time kExtraTime = 0.25;       // DEFAULT: 0.25 s
 
     // === END Set ilqgames solver parameters === //
 
@@ -156,9 +161,6 @@ int main(int argc, char **argv) {
 
     else {
         // Solve the game (receding horizon)
-        constexpr ilqgames::Time kFinalTime = 10.0;       // DEFAULT: 10 s -> CANNOT BE CHANGED ?!
-        constexpr ilqgames::Time kPlannerRuntime = 0.25;  // DEFAULT: 0.25 s
-        constexpr ilqgames::Time kExtraTime = 0.25;       // DEFAULT: 0.25 s
         const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs =
             ilqgames_planning::RecedingHorizonSimulator(kFinalTime, kPlannerRuntime, kExtraTime, &solver); // using customized simulator
 
@@ -223,22 +225,12 @@ void pack_dirs(const std::string common_string, const std::string current_dir) {
 
         if (dir_to_move.find(common_string) != std::string::npos) {
             std::string dest_dir = current_dir + fs::path::preferred_separator + common_string;
-            std::string command = "mv " + dir_to_move + " " + dest_dir;
-//            std::cout << command << std::endl;
+            fs::create_directory(dest_dir);
+            std::string new_dir = current_dir + fs::path::preferred_separator + common_string + fs::path::preferred_separator + filename;
+            fs::create_directory(new_dir);
+
+            std::string command = "mv -T " + dir_to_move + " " + new_dir;
             system(command.c_str());
-
-            // Remove dir created during first iteration (written "/0" instead of full path)
-            if (i == 0) {
-                std::string new_dir = current_dir + fs::path::preferred_separator + common_string + fs::path::preferred_separator + filename;
-                std::string old_dir = dest_dir + fs::path::preferred_separator + "0";
-                fs::create_directory(new_dir);
-                std::string command = "mv " + old_dir + fs::path::preferred_separator + "* " + new_dir;
-//                std::cout << command << std::endl;
-                system(command.c_str());
-
-                command = "rm -r " + old_dir;
-                system(command.c_str());
-            }
         }
         i++;
     }
