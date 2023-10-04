@@ -34,7 +34,6 @@ static constexpr float kRobotTcpTargetVx = 0.0;    // m/s
 static constexpr float kRobotTcpTargetVy = 0.0;    // m/s
 static constexpr float kRobotTcpTargetVz = 0.0;    // m/s
 
-
 # hand_tcp_point3D_receding_targetPosCost_0
 
 // Cost weights
@@ -237,4 +236,4 @@ constexpr float kMinProximity = 0.0;  // m (threshold to activate proximity cost
 static constexpr float kHumanHandNominalV = -3.0;    // m/s
 static constexpr float kRobotTcpNominalV = 1.0;     // m/s
 
-**Agents tend to maintain the specified velocity, as expected.**
+**Agents tend to maintain the specified velocity (points along the trajectory are more evenly spaced), as expected.**
