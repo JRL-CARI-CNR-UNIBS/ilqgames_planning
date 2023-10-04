@@ -10,6 +10,9 @@
 
 #include <stdio.h>
 
+#include <iostream>
+#include <fstream>
+
 #include <vector>
 #include <regex>
 #include <filesystem>
@@ -37,6 +40,7 @@ DEFINE_bool(receding_horizon, true, "Solve in a receding horizon fashion.");
 
 int find_max_idx_in_dir(const std::string dir); // custom function to find the maximum index in a given directory
 void pack_dirs(const std::string common_string, const std::string dir);
+void log_polyline(const std::shared_ptr<ilqgames_planning::HandTcpPoint3D>& problem, const std::string exp_name);
 
 int main(int argc, char **argv) {
 
@@ -185,7 +189,11 @@ int main(int argc, char **argv) {
                 }
                 i++;
             }
+            // Pack all iterations in a single folder for the current experiment
             pack_dirs(new_dir, ILQGAMES_LOG_DIR);
+
+            // Log the polyline used as reference trajectory in the current experiment
+            log_polyline(problem, new_dir);
         }
     }
 
@@ -234,4 +242,29 @@ void pack_dirs(const std::string common_string, const std::string current_dir) {
         }
         i++;
     }
+}
+
+
+void log_polyline(const std::shared_ptr<ilqgames_planning::HandTcpPoint3D>& problem, const std::string exp_name) {
+    const std::string root_dir = std::string(ILQGAMES_LOG_DIR).substr(0, std::string(ILQGAMES_LOG_DIR).size()-5); // remove "/logs" from the end of the string
+    const std::string exp_dir = root_dir + fs::path::preferred_separator + std::string("waypoints") + fs::path::preferred_separator + exp_name;
+    fs::create_directory(exp_dir);
+
+    // Create and open a text file
+    std::ofstream file(exp_dir + fs::path::preferred_separator + std::string("waypoints.txt"));
+
+    std::map<std::string, std::vector<ilqgames_planning::Point3>> waypoints = problem ->GetWaypoints();
+
+    for (auto elem : waypoints) {
+        file << elem.first << std::endl; // Write te agent's name
+
+        auto fun = [&](ilqgames_planning::Point3 const& point) {
+            file << point.x() << " " << point.y() << " " << point.z() << std::endl;
+        };
+
+        // Apply the lambda function fun to all elements of the std::vector<ilqgames_planning::Point3>>
+        std::for_each(std::begin(elem.second), std::end(elem.second), fun);
+    }
+
+    file.close();
 }

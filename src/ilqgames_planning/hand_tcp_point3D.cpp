@@ -8,14 +8,13 @@
 #include <ilqgames/constraint/single_dimension_constraint.h>
 #include <ilqgames_planning/polyline3.h>
 #include <ilqgames_planning/quadratic_polyline3_cost.h>
-#include <ilqgames_planning/types.h>
 
 namespace ilqgames_planning {
 
 namespace {
 
 // TimeStep & TimeHorizon
-// Edit variables kTimeStep and kTimeHorizon in file
+// Edit variables kTimeStep and kTimeHorizon in file [???]
 // "/ilqgames/include/ilqgames/utils/types.h:133" and recompile the ilqgames library
 // (Default values: kTimeStep = 0.1, kTimeHorizon = 10.0)
 
@@ -334,11 +333,11 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 
     ilqgames_planning::Point3 PfP0_humanHand = Pf_humanHand - P0_humanHand;
     ilqgames_planning::Point3 random_vector_humanHand = ilqgames_planning::Point3(0.0, 0.0, 1.0);
-    ilqgames_planning::Point3 orthogonal_vector_humanHand = PfP0_humanHand.cross3(random_vector_humanHand);
+    ilqgames_planning::Point3 orthogonal_vector_humanHand = PfP0_humanHand.cross(random_vector_humanHand);
 
     ilqgames_planning::Point3 PfP0_robotTcp = Pf_robotTcp - P0_robotTcp;
     ilqgames_planning::Point3 random_vector_robotTcp = ilqgames_planning::Point3(0.0, 0.0, 1.0);
-    ilqgames_planning::Point3 orthogonal_vector_robotTcp = PfP0_robotTcp.cross3(random_vector_robotTcp);
+    ilqgames_planning::Point3 orthogonal_vector_robotTcp = PfP0_robotTcp.cross(random_vector_robotTcp);
 
     ilqgames_planning::Point3 P1_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) / 4.0,
                                                                        kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) / 4.0,
@@ -370,8 +369,9 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
                                                                       kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) * 3.0 / 4.0) +
                                                                       orthogonal_vector_robotTcp;
 
-
-    const ilqgames_planning::Polyline3 humanHand_traj({P0_humanHand, P1_humanHand, P2_humanHand, P3_humanHand, Pf_humanHand});
+    const PointList3 humanHand_points = {P0_humanHand, P1_humanHand, P2_humanHand, P3_humanHand, Pf_humanHand};
+    HandTcpPoint3D::waypoints_["humanHand"] = humanHand_points;
+    const ilqgames_planning::Polyline3 humanHand_traj(humanHand_points);
 
     const std::shared_ptr<ilqgames_planning::QuadraticPolyline3Cost> humanHand_traj_cost(
         new ilqgames_planning::QuadraticPolyline3Cost(kLaneCostWeight, humanHand_traj,
@@ -379,7 +379,9 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 
     humanHand_cost.AddStateCost(humanHand_traj_cost);
 
-    const ilqgames_planning::Polyline3 robotTcp_traj({P0_robotTcp, P1_robotTcp, P2_robotTcp, P3_robotTcp, Pf_robotTcp});
+    const PointList3 robotTcp_points = {P0_robotTcp, P1_robotTcp, P2_robotTcp, P3_robotTcp, Pf_robotTcp};
+    HandTcpPoint3D::waypoints_["robotTcp"] = robotTcp_points;
+    const ilqgames_planning::Polyline3 robotTcp_traj(robotTcp_points);
 
     const std::shared_ptr<ilqgames_planning::QuadraticPolyline3Cost> robotTcp_traj_cost(
         new ilqgames_planning::QuadraticPolyline3Cost(kLaneCostWeight, robotTcp_traj,

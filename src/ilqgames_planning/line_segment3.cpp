@@ -16,7 +16,7 @@ Point3 LineSegment3::ClosestPoint(const Point3& query, bool* is_endpoint,
 
   // Find dot and cross product.
   const float dot_product = relative_query.dot(unit_direction_);
-  const Eigen::Matrix3f cross_product = relative_query.cross(unit_direction_); // https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+  const Eigen::Vector3f cross_product = relative_query.cross(unit_direction_); // https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
 
   // Determine closest point. This will either be an endpoint or the interior of the segment.
   if (dot_product < 0.0) {

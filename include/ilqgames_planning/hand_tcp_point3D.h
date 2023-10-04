@@ -2,6 +2,8 @@
 #define HAND_TCP_POINT3D_H
 
 #include <ilqgames/solver/top_down_renderable_problem.h>
+#include <ilqgames_planning/types.h>
+#include <map>
 
 namespace ilqgames_planning {
 
@@ -26,6 +28,13 @@ class HandTcpPoint3D : public ilqgames::TopDownRenderableProblem {
         std::vector<float> Vzs(const Eigen::VectorXf& x) const;
 
         inline std::vector<float> Thetas(const Eigen::VectorXf& x) const { return {}; }; // just to implement the pure virtual method from the parent class (not used!)
+
+        // Unpack the list of possible waypoints to pass through for each player
+        inline std::map<std::string, std::vector<Point3>> GetWaypoints() const { return waypoints_; };
+
+    private:
+        // Map to store list of waypoints for each agent
+        std::map<std::string, std::vector<Point3>> waypoints_;
 
 };  // class HandTcpPoint3D
 
