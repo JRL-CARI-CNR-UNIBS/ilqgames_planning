@@ -46,7 +46,8 @@ Point3 LineSegment3::ClosestPoint(const Point3& query, bool* is_endpoint,
   if (squared_distance)
     *squared_distance = cross_product.squaredNorm(); // https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
 
-  return p1_ + dot_product * unit_direction_;
+  const Point3 closest(p1_ + dot_product * unit_direction_);
+  return closest;
 }
 
 }  // namespace ilqgames_planning

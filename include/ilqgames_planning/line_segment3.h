@@ -58,7 +58,11 @@ class LineSegment3 {
             p2_(point2),
             length_((point1 - point2).norm()),
             unit_direction_((point2 - point1) / length_) {
-        CHECK_GT(length_, ilqgames::constants::kSmallNumber);
+
+          p2p1_ = (p2_ - p1_);
+          CHECK_LT(p2p1_.norm() - length_, ilqgames::constants::kSmallNumber);
+          CHECK_GT(length_, ilqgames::constants::kSmallNumber);
+
       }
 
       // Accessors.
@@ -66,22 +70,12 @@ class LineSegment3 {
       const Point3& FirstPoint() const { return p1_; }
       const Point3& SecondPoint() const { return p2_; }
       const Point3& UnitDirection() const { return unit_direction_; }
-      Eigen::Matrix3f Heading() const { // https://stackoverflow.com/questions/35613741/convert-2-3d-points-to-directional-vectors-to-euler-angles
-        float r = length_; // r = SQRT(v_x^2+v_y^2+v_z^2)
-        float phi = std::atan2(UnitDirection().z(), UnitDirection().x()); // ψ = ATAN2(v_z, v_x)
-        float theta = std::atan2(UnitDirection().y(),
-                                 std::sqrt((p2_(0)-p1_(0))*(p2_(0)-p1_(0)) + (p2_(0)-p1_(2))*(p2_(0)-p1_(2)))); // θ = ATAN2(v_y, SQRT(v_x^2+v_z^2))
 
-        Eigen::Vector3f j(std::cos(phi)*std::cos(theta), std::sin(theta), std::sin(phi)*std::cos(theta)); // the along direction vector
-        Eigen::Vector3f i(std::sin(phi), 0.0, -std::cos(phi)); // perpendicular vector 1
-        Eigen::Vector3f k(std::cos(phi)*std::sin(theta), -std::cos(theta), std::sin(phi)*std::sin(theta)); // perpendicular vector 2
-
-        Eigen::Matrix3f R(3,3);
-        R(0,0) = i(0);    R(0,1) = j(0);    R(0,2) = k(0);
-        R(1,0) = i(1);    R(1,1) = j(1);    R(1,2) = k(1);
-        R(2,0) = i(2);    R(2,1) = j(2);    R(2,2) = k(2);
-
-        return R;
+      // Express heading in terms of Euler Angles (Z-Y rotations in radians)
+      std::vector<float> Heading() const {
+        const float theta_x = std::atan2(p2p1_.y(), p2p1_.x());
+        const float theta_y = -std::atan2(p2p1_.z(), std::sqrt((pow(p2p1_.x(),2) + pow(p2p1_.y(),2))));
+        return {theta_x, theta_y};
       }
 
       // Find closest point on this line segment to a given point (and optionally
@@ -94,6 +88,7 @@ class LineSegment3 {
     private:
       Point3 p1_;
       Point3 p2_;
+      Point3 p2p1_;
       float length_;
       Point3 unit_direction_;
 };  // struct LineSegment3

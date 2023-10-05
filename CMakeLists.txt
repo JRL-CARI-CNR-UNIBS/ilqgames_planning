@@ -14,6 +14,9 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif(NOT CMAKE_BUILD_TYPE)
 
+# Build options.
+option(BUILD_TESTS "Build tests" ON)
+
 
 # === BUILD LIBRARY === #
 # Collect source files and build the ilqgames object.
@@ -49,3 +52,9 @@ message("ILQGAMES logging directory: " ${DEFS})
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
                       
+
+# === BUILD TESTS === #
+if (BUILD_TESTS)
+  message("Build tests is enabled.")
+  add_subdirectory(test)
+endif (BUILD_TESTS)
