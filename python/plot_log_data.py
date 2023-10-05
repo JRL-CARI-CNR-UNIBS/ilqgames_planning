@@ -10,12 +10,14 @@ from IPython.display import display, clear_output
 sns.set_theme(context="paper", style="whitegrid")
 
 LOG_DIRECTORY = "../logs/"
+WAYPTS_DIRECTORY = "../waypoints/"
 EXAMPLE_LOGDIR = "hand_tcp_point3D_50" # to test single iteration
-EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_5" # to test full trajectory along receding horizon
+EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_12" # to test full trajectory along receding horizon
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
 RECEDING_HORIZON = True
+REFERENCE_TRAJECTORY = True
 
 
 def parse_txt(filename):
@@ -183,7 +185,7 @@ def plot_traj_3d_receding(states):
     plt.draw()
 
 
-def plot_predictions_3d_receding(states, t0s): # plot future optimal trajectory of each agent for the given receding horizon invocation               
+def plot_predictions_3d_receding(states, t0s, waypts): # plot future optimal trajectory of each agent for the given receding horizon invocation               
     final_time = list(t0s.values())[-1][0][0][0]
 
     # Update axes limits just at initialization
@@ -191,15 +193,14 @@ def plot_predictions_3d_receding(states, t0s): # plot future optimal trajectory 
     y0 = states[0][0][0][[2,8]]
     z0 = states[0][0][0][[4,10]]
 
+    if REFERENCE_TRAJECTORY:
+        all_waypts = np.vstack((waypts['humanHand'], waypts['robotTcp']))
+         
     # Create and configure axes
     fig = plt.figure('3D trajectories - Receding horizon')
     fig.canvas.manager.window.attributes('-topmost', 1) # bring the figure window to the front
     ax = fig.add_subplot(projection='3d')
-    ax.set_title("Evolution of the state")
-    ax.set_ylabel('y')
-    ax.set_zlabel('z')
-    ax.set_xlabel('x')
-    
+        
     i = 0
     for entry in states.values():
         actual_states = np.asarray(entry[0].tolist())
@@ -216,20 +217,43 @@ def plot_predictions_3d_receding(states, t0s): # plot future optimal trajectory 
             ax.plot(xs=actual_states[:,6], ys=actual_states[:,8], zs=actual_states[:,10], marker='o', markersize=0.75, alpha=0.5)
             ax.scatter(xs=actual_states[0,6], ys=actual_states[0,8], zs=actual_states[0,10], c='g', marker='o', label='Robot TCP')
         
-        # Update axes limits for each iteration
-        # xs = np.append(actual_states[:,0], actual_states[:,6])
-        # ys = np.append(actual_states[:,2], actual_states[:,8])
-        # zs = np.append(actual_states[:,4], actual_states[:,10])
-    
-        # Update axes limits for each iteration
-        # ax.set_xlim(min(xs), max(xs))
-        # ax.set_ylim(min(ys), max(ys))
-        # ax.set_zlim(min(zs), max(zs))
+        if REFERENCE_TRAJECTORY:
+            # Agent 1 (Human Hand)
+            ax.plot(xs=waypts['humanHand'][:,0], ys=waypts['humanHand'][:,1], zs=waypts['humanHand'][:,2],
+                    c='y', marker='s', markersize=2, alpha=0.5, label='Human hand reference')
+            
+            if N_AGENTS > 1:
+                # Agent 2 (Robot Tcp)
+                ax.plot(xs=waypts['robotTcp'][:,0], ys=waypts['robotTcp'][:,1], zs=waypts['robotTcp'][:,2],
+                    c='k', marker='s', markersize=2, alpha=0.5, label='Robot TCP reference')
 
-        # Update axes limits just based on initial state
-        ax.set_xlim(min(x0), max(x0))
-        ax.set_ylim(min(y0), max(y0))
-        ax.set_zlim(min(z0), max(z0))
+        # Update axes limits
+        if REFERENCE_TRAJECTORY:
+            # Update axes limits just based on bounds on the reference trajectory
+            ax.set_xlim(min(all_waypts[:,0]), max(all_waypts[:,0]))
+            ax.set_ylim(min(all_waypts[:,1]), max(all_waypts[:,1]))
+            ax.set_zlim(min(all_waypts[:,2]), max(all_waypts[:,2]))
+        else:
+            # Update axes limits for each iteration
+            # xs = np.append(actual_states[:,0], actual_states[:,6])
+            # ys = np.append(actual_states[:,2], actual_states[:,8])
+            # zs = np.append(actual_states[:,4], actual_states[:,10])
+        
+            # Update axes limits for each iteration
+            # ax.set_xlim(min(xs), max(xs))
+            # ax.set_ylim(min(ys), max(ys))
+            # ax.set_zlim(min(zs), max(zs))
+
+            # Update axes limits just based on initial state
+            ax.set_xlim(min(x0), max(x0))
+            ax.set_ylim(min(y0), max(y0))
+            ax.set_zlim(min(z0), max(z0))
+
+        # setting title and labels
+        ax.set_title("Evolution of the state")
+        ax.set_ylabel('y')
+        ax.set_zlabel('z')
+        ax.set_xlabel('x')
 
         # Draw legend
         ax.legend()
@@ -241,15 +265,15 @@ def plot_predictions_3d_receding(states, t0s): # plot future optimal trajectory 
         i += 1
 
         # Wait for key press to advance to the next iteration
+        plt.pause(0.01)
         input("Press Enter to display next receding horizon invocation... \
               [iter " + str(i) + " out of " + str(len(states.values())) + \
               " | time: " + str(actual_time) + " s / " + str(final_time) + " s]")
-        plt.pause(0.01)
         
         # # Advance automatically to the next iteration
+        # plt.pause(1)
         # print("iter " + str(i) + " out of " + str(len(states.values())) + \
         #       " | time: " + str(actual_time) + " s / " + str(final_time) + " s")
-        # plt.pause(1)
 
     plt.close(fig)
 
@@ -277,6 +301,37 @@ def add_iteration_data(dir, control_inputs, states, t0s, runtimes, costs, operat
             add_element_to_dict(costs, operating_point, data)
 
 
+def parse_waypoints(waypts):
+    waypts_file = os.path.join(WAYPTS_DIRECTORY, EXAMPLE_LOGDIR_RECEDING, "waypoints.txt")
+    
+    f = open(waypts_file,'r')
+
+    current_agent = []
+
+    for row in f:
+
+        if any(c.isalpha() for c in row):
+            current_agent = row[:-1]                # remove trailing "\n"
+            waypts[current_agent] = []
+        else:
+            items = []
+            row = row.split(' ')
+            row = [item for item in row if item]    # filter out empty strings
+            row[-1] = row[-1][:-1]                  # remove trailing "\n" from the last element of the row
+
+            for item in row:
+                items.append(item)
+
+            items = np.asarray(items, dtype=float)
+
+            waypts[current_agent].append(items)
+
+    for agent in waypts.keys():
+        waypts[agent] = np.asarray(waypts[agent])
+
+    return waypts
+
+
 def main():
     if RECEDING_HORIZON:
         path_to_logfile = os.path.join(LOG_DIRECTORY, EXAMPLE_LOGDIR_RECEDING)
@@ -296,6 +351,10 @@ def main():
     control_inputs = {}
     t0s = {}
     runtimes = {}
+    waypts = {}
+
+    if REFERENCE_TRAJECTORY:
+        waypts = parse_waypoints(waypts)
 
     if RECEDING_HORIZON:
         for dir in dirs:
@@ -324,7 +383,8 @@ def main():
         t0s = sort_dict(t0s)
         runtimes = sort_dict(runtimes)
 
-        plot_predictions_3d_receding(states, t0s)
+        plot_predictions_3d_receding(states, t0s, waypts)
+        
         # plot_traj_3d_receding(states)
 
     else:

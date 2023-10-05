@@ -105,6 +105,9 @@ int main(int argc, char **argv) {
     LOG(INFO) << "Is the problem constrained? " << (problem->IsConstrained() ? "YES" : "NO");
     ilqgames::AugmentedLagrangianSolver solver(problem, params);
 
+    // Declare logging directory
+    std::string log_dir;
+
     if (!FLAGS_receding_horizon) {
         // Solve the game (one-step)
         const auto start = std::chrono::system_clock::now();
@@ -148,16 +151,19 @@ int main(int argc, char **argv) {
         // Create log list
         const std::vector<std::shared_ptr<const ilqgames::SolverLog>> logs = {log};
 
-        // Dump the logs and/or exit
-        if (FLAGS_save) {
+        // Dump the logs and/or exit       
+        if (FLAGS_save) {           
             if (FLAGS_experiment_name == "") {
                 CHECK(log->Save(FLAGS_last_traj));
 
             } else {
-                if (fs::is_empty(ILQGAMES_LOG_DIR))
-                    CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_0"));
+                if (fs::is_empty(ILQGAMES_LOG_DIR)) {
+                    log_dir = FLAGS_experiment_name + "_0";
+                    CHECK(log->Save(FLAGS_last_traj, log_dir));
+                }
                 else {
-                    CHECK(log->Save(FLAGS_last_traj, FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_dir(ILQGAMES_LOG_DIR)+1)));
+                    log_dir = FLAGS_experiment_name + "_" + std::to_string(find_max_idx_in_dir(ILQGAMES_LOG_DIR)+1);
+                    CHECK(log->Save(FLAGS_last_traj, log_dir));
                 }
             }
         }
@@ -170,11 +176,10 @@ int main(int argc, char **argv) {
 
         // Dump the logs and/or exit
         if (FLAGS_save) {
-            std::string new_dir;
             if (fs::is_empty(ILQGAMES_LOG_DIR))
-                new_dir = FLAGS_experiment_name + "_receding_0";
+                log_dir = FLAGS_experiment_name + "_receding_0";
             else
-                new_dir = FLAGS_experiment_name + "_receding_" + std::to_string(find_max_idx_in_dir(ILQGAMES_LOG_DIR)+1);
+                log_dir = FLAGS_experiment_name + "_receding_" + std::to_string(find_max_idx_in_dir(ILQGAMES_LOG_DIR)+1);
 
             int i = 0;
             for (auto &log : logs) {
@@ -183,19 +188,19 @@ int main(int argc, char **argv) {
 
                 } else {
                     if (i == 0)
-                        CHECK(log->Save(FLAGS_last_traj, new_dir + "_iter_0"));
+                        CHECK(log->Save(FLAGS_last_traj, log_dir + "_iter_0"));
                     else
-                        CHECK(log->Save(FLAGS_last_traj, new_dir + "_iter_" + std::to_string(i)));
+                        CHECK(log->Save(FLAGS_last_traj, log_dir + "_iter_" + std::to_string(i)));
                 }
                 i++;
             }
             // Pack all iterations in a single folder for the current experiment
-            pack_dirs(new_dir, ILQGAMES_LOG_DIR);
-
-            // Log the polyline used as reference trajectory in the current experiment
-            log_polyline(problem, new_dir);
+            pack_dirs(log_dir, ILQGAMES_LOG_DIR);
         }
     }
+
+    // Log the polyline used as reference trajectory in the current experiment
+    log_polyline(problem, log_dir);
 
     return 0;
 }
