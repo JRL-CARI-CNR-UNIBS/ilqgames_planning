@@ -1,40 +1,4 @@
-/*
- * Copyright (c) 2019, The Regents of the University of California (Regents).
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are
- * met:
- *
- *    1. Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *
- *    2. Redistributions in binary form must reproduce the above
- *       copyright notice, this list of conditions and the following
- *       disclaimer in the documentation and/or other materials provided
- *       with the distribution.
- *
- *    3. Neither the name of the copyright holder nor the names of its
- *       contributors may be used to endorse or promote products derived
- *       from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- *
- * Please contact the author(s) of this library if you have any questions.
- * Authors: David Fridovich-Keil   ( dfk@eecs.berkeley.edu )
- */
-
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //
 // Quadratic penalty on distance from a given Polyline3.
 //
@@ -60,13 +24,13 @@ float QuadraticPolyline3Cost::Evaluate(const VectorXf& input) const {
   polyline_.ClosestPoint(Point3(input(xidx_), input(yidx_), input(zidx_)), nullptr, nullptr,
                          &squared_distance, &is_endpoint);
 
-  if (is_endpoint) {
-    // If the is_endpoint flag is raised, we set the squared_distance to
-    // 0.0.
-    squared_distance = 0.0;
-  }
+//  if (is_endpoint) {
+//    // If the is_endpoint flag is raised, we set the squared_distance to
+//    // 0.0.
+//    squared_distance = 0.0;
+//  }
 
-  return 0.5 * weight_ * std::abs(squared_distance);
+  return 0.5 * weight_ * squared_distance;
 }
 
 void QuadraticPolyline3Cost::Quadraticize(const VectorXf& input, MatrixXf* hess,
@@ -90,6 +54,8 @@ void QuadraticPolyline3Cost::Quadraticize(const VectorXf& input, MatrixXf* hess,
   const Point3 closest_point = polyline_.ClosestPoint(
       current_position, &is_vertex, &segment, nullptr, &is_endpoint);
 
+//  std::cout << "Closest point: " << closest_point << std::endl;
+
   // First check whether the closest point is a endpoint of the polyline.
   if (is_endpoint) return;
 
@@ -106,13 +72,13 @@ void QuadraticPolyline3Cost::Quadraticize(const VectorXf& input, MatrixXf* hess,
   float dz = weight_ * (current_position.z() - closest_point.z());
 
   // if closest_point is a vertex, then hessian and gradient are computed
-  // in the standard way. If it is, then compute the cross product
+  // in the standard way. If it is not, then compute the cross product
   if (!is_vertex) {
     const Point3 relative = current_position - segment.FirstPoint();
     const Point3 unit_segment = segment.UnitDirection();
     const Point3 closest_point_relative = closest_point - segment.FirstPoint();
 
-    const Point3 orthogonal_vector = relative - closest_point_relative.dot(relative) * unit_segment;
+    const Point3 orthogonal_vector = relative - closest_point_relative;
     const Point3 orthogonal_versor = orthogonal_vector / orthogonal_vector.norm();
 
     // Handle Hessian first.

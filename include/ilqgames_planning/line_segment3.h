@@ -65,6 +65,11 @@ class LineSegment3 {
 
       }
 
+      // Override operator equal to check if two objects are the same
+      bool operator==(const LineSegment3 &other_segment) const {
+        return (this->p1_ == other_segment.p1_ && this->p1_ == other_segment.p1_);
+      }
+
       // Accessors.
       float Length() const { return length_; }
       const Point3& FirstPoint() const { return p1_; }

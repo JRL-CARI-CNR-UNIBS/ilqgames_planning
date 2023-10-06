@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
 
     // Receding horizon parameters
     constexpr ilqgames::Time kFinalTime = 5.0;       // DEFAULT: 10.0 s
-    constexpr ilqgames::Time kPlannerRuntime = 0.25;  // DEFAULT: 0.25 s
+    constexpr ilqgames::Time kPlannerRuntime = 0.3;  // DEFAULT: 0.25 s
     constexpr ilqgames::Time kExtraTime = 0.25;       // DEFAULT: 0.25 s
 
     // === END Set ilqgames solver parameters === //

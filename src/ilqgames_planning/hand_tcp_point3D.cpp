@@ -29,13 +29,13 @@ namespace {
 
 // ===== Cost weights ===== //
 // Target position cost
-static constexpr float kHumanHandGoalXCost = 1;
-static constexpr float kHumanHandGoalYCost = 1;
-static constexpr float kHumanHandGoalZCost = 1;
+static constexpr float kHumanHandGoalXCost = 1.0;
+static constexpr float kHumanHandGoalYCost = 1.0;
+static constexpr float kHumanHandGoalZCost = 1.0;
 
-static constexpr float kRobotTcpGoalXCost = 1;
-static constexpr float kRobotTcpGoalYCost = 1;
-static constexpr float kRobotTcpGoalZCost = 1;
+static constexpr float kRobotTcpGoalXCost = 1.0;
+static constexpr float kRobotTcpGoalYCost = 1.0;
+static constexpr float kRobotTcpGoalZCost = 1.0;
 
 // Target velocity cost
 static constexpr float kHumanHandGoalVxCost = 0.0;
@@ -56,13 +56,13 @@ static constexpr float kRobotTcpNominalVyCost = 0.0;
 static constexpr float kRobotTcpNominalVzCost = 0.0;
 
 // Control effort (acceleration) cost
-static constexpr float kHumanHandAccXCost = 0.1;
-static constexpr float kHumanHandAccYCost = 0.1;
-static constexpr float kHumanHandAccZCost = 0.1;
+static constexpr float kHumanHandAccXCost = 10.0;
+static constexpr float kHumanHandAccYCost = 10.0;
+static constexpr float kHumanHandAccZCost = 10.0;
 
-static constexpr float kRobotTcpAccXCost = 0.1;
-static constexpr float kRobotTcpAccYCost = 0.1;
-static constexpr float kRobotTcpAccZCost = 0.1;
+static constexpr float kRobotTcpAccXCost = 10.0;
+static constexpr float kRobotTcpAccYCost = 10.0;
+static constexpr float kRobotTcpAccZCost = 10.0;
 
 // Proximity cost
 static constexpr float kProximityCostWeight = 0.0;
@@ -80,8 +80,8 @@ static constexpr float kRobotTcpFinalTimeZCost = 0.0;
 constexpr float kFinalTimeWindow = 0.5;  // s (threshold to activate final time cost)
 
 // Reference trajectory cost
-static constexpr float kHumanHandLaneCostWeight = 100.0;
-static constexpr float kRobotTcpLaneCostWeight = 0.0;
+static constexpr float kHumanHandLaneCostWeight = 10.0;
+static constexpr float kRobotTcpLaneCostWeight = 100.0;
 
 // ===== END Cost weights ===== //
 
@@ -341,8 +341,8 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     ilqgames_planning::Point3 orthogonal_vector_robotTcp = PfP0_robotTcp.cross(random_vector_robotTcp);
 
     // Scale the orthogonal deviation from the straight path from start to finish pos
-    double scale_factor_humanHand = 0.1;
-    double scale_factor_robotTcp = 0.3;
+    double scale_factor_humanHand = 0.05;
+    double scale_factor_robotTcp = 0.1;
 
     ilqgames_planning::Point3 P1_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) / 4.0,
                                                                        kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) / 4.0,
