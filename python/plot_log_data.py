@@ -9,10 +9,12 @@ from IPython.display import display, clear_output
 
 sns.set_theme(context="paper", style="whitegrid")
 
-LOG_DIRECTORY = "../logs/"
-WAYPTS_DIRECTORY = "../waypoints/"
+base_dir, script_folder = os.path.split(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIRECTORY = base_dir
+LOG_DIRECTORY = BASE_DIRECTORY + "/logs/"
+WAYPTS_DIRECTORY = BASE_DIRECTORY + "/waypoints/"
 EXAMPLE_LOGDIR = "hand_tcp_point3D_50" # to test single iteration
-EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_6" # to test full trajectory along receding horizon
+EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_26" # to test full trajectory along receding horizon
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2

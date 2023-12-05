@@ -12,6 +12,8 @@ set(CPP_VERSION 17 CACHE STRING "C++ version to use.")
 if(NOT CMAKE_BUILD_TYPE)
   message("Defaulting to building targets in Debug mode.")
   set(CMAKE_BUILD_TYPE Debug)
+else()
+  message("Building targets in ${CMAKE_BUILD_TYPE} mode.")
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Build options.
@@ -52,6 +54,9 @@ message("ILQGAMES logging directory: " ${DEFS})
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
                       
+# rdyn_core
+find_package(rdyn_core REQUIRED)
+include_directories(SYSTEM ${RDYN_CORE_INCLUDE_DIR})
 
 # === BUILD TESTS === #
 if (BUILD_TESTS)
