@@ -9,6 +9,7 @@
 #include <ilqgames_planning/polyline3.h>
 #include <ilqgames_planning/quadratic_polyline3_cost.h>
 #include <ilqgames/cost/nominal_path_length_cost.h>
+#include <ilqgames/cost/semiquadratic_cost.h>
 
 namespace ilqgames_planning {
 
@@ -70,12 +71,45 @@ static constexpr float kProximityCostWeight = 0.0;
 constexpr float kMinProximity = 1.0;  // m (threshold to activate proximity cost)
 
 // Final time cost (can be applied to any cost to activate it after a given elapsed time)
-constexpr float kFinalTimeWindow = ilqgames::time::kTimeHorizon;  // s (threshold to activate final time cost)
+constexpr float kFinalGoalTimeThresh = 1.5;  // s (threshold to activate final time cost on target state)
+constexpr float  kFinalTrajTimeThresh = 3.0; // s (threshold to activate final time cost on reference traj)
 
 // Reference trajectory cost
-static constexpr float kHumanHandLaneCostWeight = 10.0;
-static constexpr float kRobotTcpLaneCostWeight = 10.0;
+static constexpr float kHumanHandLaneCostWeight = 100.0;
+static constexpr float kRobotTcpLaneCostWeight = 100.0;
 
+// Min/Max position cost
+static constexpr float kHumanHandMinXCostWeight = 10.0;
+static constexpr float kHumanHandMinYCostWeight = 10.0;
+static constexpr float kHumanHandMinZCostWeight = 10.0;
+
+static constexpr float kHumanHandMinX = -5.0;
+static constexpr float kHumanHandMinY = -5.0;
+static constexpr float kHumanHandMinZ = -5.0;
+
+static constexpr float kHumanHandMaxXCostWeight = 10.0;
+static constexpr float kHumanHandMaxYCostWeight = 10.0;
+static constexpr float kHumanHandMaxZCostWeight = 10.0;
+
+static constexpr float kHumanHandMaxX = 5.0;
+static constexpr float kHumanHandMaxY = 5.0;
+static constexpr float kHumanHandMaxZ = 5.0;
+
+static constexpr float kRobotTcpMinXCostWeight = 10.0;
+static constexpr float kRobotTcpMinYCostWeight = 10.0;
+static constexpr float kRobotTcpMinZCostWeight = 10.0;
+
+static constexpr float kRobotTcpMinX = -5.0;
+static constexpr float kRobotTcpMinY = -5.0;
+static constexpr float kRobotTcpMinZ = -5.0;
+
+static constexpr float kRobotTcpMaxXCostWeight = 10.0;
+static constexpr float kRobotTcpMaxYCostWeight = 10.0;
+static constexpr float kRobotTcpMaxZCostWeight = 10.0;
+
+static constexpr float kRobotTcpMaxX = 5.0;
+static constexpr float kRobotTcpMaxY = 5.0;
+static constexpr float kRobotTcpMaxZ = 5.0;
 
 // ===== END Cost weights ===== //
 
@@ -107,12 +141,12 @@ static constexpr float kRobotTcpInitialVz = 0.0;    // m/s
 
 // Target state
 static constexpr float kHumanHandTargetX = -8.0;    // m
-static constexpr float kHumanHandTargetY = -8.0;    // m
-static constexpr float kHumanHandTargetZ = -8.0;    // m
+static constexpr float kHumanHandTargetY = -6.0;    // m
+static constexpr float kHumanHandTargetZ = -10.0;    // m
 
-static constexpr float kRobotTcpTargetX = 7.0;      // m
-static constexpr float kRobotTcpTargetY = 9.0;      // m
-static constexpr float kRobotTcpTargetZ = 8.0;      // m
+static constexpr float kRobotTcpTargetX = -5.0;      // m
+static constexpr float kRobotTcpTargetY = -5.0;      // m
+static constexpr float kRobotTcpTargetZ = 10.0;      // m
 
 static constexpr float kHumanHandTargetVx = 0.0;   // m/s
 static constexpr float kHumanHandTargetVy = 0.0;   // m/s
@@ -233,147 +267,185 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
     robotTcp_cost.AddStateCost(robotTcp_goalZ_cost);
 
 
-//    // Quadratic state costs for target velocity
-//    const auto humanHand_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandGoalVxCost, kHumanHandVxIdx, kHumanHandTargetVx, "humanHand_goalVx_cost");
-//    const auto humanHand_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandGoalVyCost, kHumanHandVyIdx, kHumanHandTargetVy, "humanHand_goalVy_cost");
-//    const auto humanHand_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandGoalVzCost, kHumanHandVzIdx, kHumanHandTargetVz, "humanHand_goalVz_cost");
+    // // Quadratic state costs for target velocity
+    // const auto humanHand_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+    //     kHumanHandGoalVxCost, kHumanHandVxIdx, kHumanHandTargetVx, "humanHand_goalVx_cost");
+    // const auto humanHand_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+    //     kHumanHandGoalVyCost, kHumanHandVyIdx, kHumanHandTargetVy, "humanHand_goalVy_cost");
+    // const auto humanHand_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+    //     kHumanHandGoalVzCost, kHumanHandVzIdx, kHumanHandTargetVz, "humanHand_goalVz_cost");
 
-//    humanHand_cost.AddStateCost(humanHand_goalVx_cost);
-//    humanHand_cost.AddStateCost(humanHand_goalVy_cost);
-//    humanHand_cost.AddStateCost(humanHand_goalVz_cost);
+    // humanHand_cost.AddStateCost(humanHand_goalVx_cost);
+    // humanHand_cost.AddStateCost(humanHand_goalVy_cost);
+    // humanHand_cost.AddStateCost(humanHand_goalVz_cost);
 
-//    const auto robotTcp_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpGoalVxCost, kRobotTcpVxIdx, kRobotTcpTargetVx, "robotTcp_goalVx_cost");
-//    const auto robotTcp_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpGoalVyCost, kRobotTcpVyIdx, kRobotTcpTargetVy, "robotTcp_goalVy_cost");
-//    const auto robotTcp_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpGoalVzCost, kRobotTcpVzIdx, kRobotTcpTargetVz, "robotTcp_goalVz_cost");
+    // const auto robotTcp_goalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+    //     kRobotTcpGoalVxCost, kRobotTcpVxIdx, kRobotTcpTargetVx, "robotTcp_goalVx_cost");
+    // const auto robotTcp_goalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+    //     kRobotTcpGoalVyCost, kRobotTcpVyIdx, kRobotTcpTargetVy, "robotTcp_goalVy_cost");
+    // const auto robotTcp_goalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+    //     kRobotTcpGoalVzCost, kRobotTcpVzIdx, kRobotTcpTargetVz, "robotTcp_goalVz_cost");
 
-//    robotTcp_cost.AddStateCost(robotTcp_goalVx_cost);
-//    robotTcp_cost.AddStateCost(robotTcp_goalVy_cost);
-//    robotTcp_cost.AddStateCost(robotTcp_goalVz_cost);
-
-
-//    // Quadratic state costs for nominal velocity
-//    const auto humanHand_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandNominalVxCost, kHumanHandVxIdx, kHumanHandNominalVx, "humanHand_nominalVx_cost");
-//    const auto humanHand_nominalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandNominalVyCost, kHumanHandVyIdx, kHumanHandNominalVy, "humanHand_nominalVy_cost");
-//    const auto humanHand_nominalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kHumanHandNominalVzCost, kHumanHandVzIdx, kHumanHandNominalVz, "humanHand_nominalVz_cost");
-
-//    humanHand_cost.AddStateCost(humanHand_nominalVx_cost);
-//    humanHand_cost.AddStateCost(humanHand_nominalVy_cost);
-//    humanHand_cost.AddStateCost(humanHand_nominalVz_cost);
-
-//    const auto robotTcp_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpNominalVxCost, kRobotTcpVxIdx, kRobotTcpNominalVx, "robotTcp_nominalVx_cost");
-//    const auto robotTcp_nominalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpNominalVyCost, kRobotTcpVyIdx, kRobotTcpNominalVy, "robotTcp_nominalVy_cost");
-//    const auto robotTcp_nominalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
-//        kRobotTcpNominalVzCost, kRobotTcpVzIdx, kRobotTcpNominalVz, "robotTcp_nominalVz_cost");
-
-//    robotTcp_cost.AddStateCost(robotTcp_nominalVx_cost);
-//    robotTcp_cost.AddStateCost(robotTcp_nominalVy_cost);
-//    robotTcp_cost.AddStateCost(robotTcp_nominalVz_cost);
+    // robotTcp_cost.AddStateCost(robotTcp_goalVx_cost);
+    // robotTcp_cost.AddStateCost(robotTcp_goalVy_cost);
+    // robotTcp_cost.AddStateCost(robotTcp_goalVz_cost);
 
 
-//    // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
-//    const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
-//        new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
-//                                               {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
-//                                               {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
-//                                               kMinProximity, "proximity_cost"));
+   // // Quadratic state costs for nominal velocity
+   // const auto humanHand_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+   //     kHumanHandNominalVxCost, kHumanHandVxIdx, kHumanHandNominalVx, "humanHand_nominalVx_cost");
+   // const auto humanHand_nominalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+   //     kHumanHandNominalVyCost, kHumanHandVyIdx, kHumanHandNominalVy, "humanHand_nominalVy_cost");
+   // const auto humanHand_nominalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+   //     kHumanHandNominalVzCost, kHumanHandVzIdx, kHumanHandNominalVz, "humanHand_nominalVz_cost");
 
-//    humanHand_cost.AddStateCost(humanRobot_proximity_cost);
-//    robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
+   // humanHand_cost.AddStateCost(humanHand_nominalVx_cost);
+   // humanHand_cost.AddStateCost(humanHand_nominalVy_cost);
+   // humanHand_cost.AddStateCost(humanHand_nominalVz_cost);
 
+   // const auto robotTcp_nominalVx_cost = std::make_shared<ilqgames::QuadraticCost>(
+   //     kRobotTcpNominalVxCost, kRobotTcpVxIdx, kRobotTcpNominalVx, "robotTcp_nominalVx_cost");
+   // const auto robotTcp_nominalVy_cost = std::make_shared<ilqgames::QuadraticCost>(
+   //     kRobotTcpNominalVyCost, kRobotTcpVyIdx, kRobotTcpNominalVy, "robotTcp_nominalVy_cost");
+   // const auto robotTcp_nominalVz_cost = std::make_shared<ilqgames::QuadraticCost>(
+   //     kRobotTcpNominalVzCost, kRobotTcpVzIdx, kRobotTcpNominalVz, "robotTcp_nominalVz_cost");
 
-    // Encourage each player to remain near the given trajectory.
-    ilqgames_planning::Point3 P0_humanHand = ilqgames_planning::Point3(kHumanHandInitialX, kHumanHandInitialY, kHumanHandInitialZ);
-    ilqgames_planning::Point3 P0_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX, kRobotTcpInitialY, kRobotTcpInitialZ);
-
-    ilqgames_planning::Point3 Pf_humanHand = ilqgames_planning::Point3(kHumanHandTargetX, kHumanHandTargetY, kHumanHandTargetZ);
-    ilqgames_planning::Point3 Pf_robotTcp = ilqgames_planning::Point3(kRobotTcpTargetX, kRobotTcpTargetY, kRobotTcpTargetZ);
-
-    ilqgames_planning::Point3 PfP0_humanHand = Pf_humanHand - P0_humanHand;
-    ilqgames_planning::Point3 random_vector_humanHand = ilqgames_planning::Point3(0.0, 0.0, 1.0);
-    ilqgames_planning::Point3 orthogonal_vector_humanHand = PfP0_humanHand.cross(random_vector_humanHand);
-
-    ilqgames_planning::Point3 PfP0_robotTcp = Pf_robotTcp - P0_robotTcp;
-    ilqgames_planning::Point3 random_vector_robotTcp = ilqgames_planning::Point3(0.0, 0.0, 1.0);
-    ilqgames_planning::Point3 orthogonal_vector_robotTcp = PfP0_robotTcp.cross(random_vector_robotTcp);
-
-    // Scale the orthogonal deviation from the straight path from start to finish pos
-    double scale_factor_humanHand = 0.05;
-    double scale_factor_robotTcp = 0.1;
-
-    ilqgames_planning::Point3 P1_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) / 4.0,
-                                                                       kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) / 4.0,
-                                                                       kHumanHandInitialZ + (kHumanHandTargetZ - kHumanHandInitialZ) / 4.0) +
-                                                                       scale_factor_humanHand * orthogonal_vector_humanHand;
-
-    ilqgames_planning::Point3 P1_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX + (kRobotTcpTargetX - kRobotTcpInitialX) / 4.0,
-                                                                      kRobotTcpInitialY + (kRobotTcpTargetY - kRobotTcpInitialY) / 4.0,
-                                                                      kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) / 4.0) +
-                                                                      scale_factor_robotTcp * orthogonal_vector_robotTcp;
-
-    ilqgames_planning::Point3 P2_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) / 2.0,
-                                                                       kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) / 2.0,
-                                                                       kHumanHandInitialZ + (kHumanHandTargetZ - kHumanHandInitialZ) / 2.0) +
-                                                                       1.5 * scale_factor_humanHand * orthogonal_vector_humanHand;
-
-    ilqgames_planning::Point3 P2_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX + (kRobotTcpTargetX - kRobotTcpInitialX) / 2.0,
-                                                                      kRobotTcpInitialY + (kRobotTcpTargetY - kRobotTcpInitialY) / 2.0,
-                                                                      kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) / 2.0) +
-                                                                      1.5 * scale_factor_robotTcp * orthogonal_vector_robotTcp;
-
-    ilqgames_planning::Point3 P3_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) * 3.0 / 4.0,
-                                                                       kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) * 3.0 / 4.0,
-                                                                       kHumanHandInitialZ + (kHumanHandTargetZ - kHumanHandInitialZ) * 3.0 / 4.0) +
-                                                                       scale_factor_humanHand * orthogonal_vector_humanHand;
-
-    ilqgames_planning::Point3 P3_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX + (kRobotTcpTargetX - kRobotTcpInitialX) * 3.0 / 4.0,
-                                                                      kRobotTcpInitialY + (kRobotTcpTargetY - kRobotTcpInitialY) * 3.0 / 4.0,
-                                                                      kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) * 3.0 / 4.0) +
-                                                                      scale_factor_robotTcp * orthogonal_vector_robotTcp;
-
-    const PointList3 humanHand_points = {P0_humanHand, P1_humanHand, P2_humanHand, P3_humanHand, Pf_humanHand};
-    HandTcpPoint3D::waypoints_["humanHand"] = humanHand_points;
-    const ilqgames_planning::Polyline3 humanHand_traj(humanHand_points);
-
-    const std::shared_ptr<ilqgames_planning::QuadraticPolyline3Cost> humanHand_traj_cost(
-        new ilqgames_planning::QuadraticPolyline3Cost(kHumanHandLaneCostWeight, humanHand_traj,
-                                                      {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx}, "humanHand_traj_cost"));
-
-//    humanHand_cost.AddStateCost(humanHand_traj_cost);
-
-    const PointList3 robotTcp_points = {P0_robotTcp, P1_robotTcp, P2_robotTcp, P3_robotTcp, Pf_robotTcp};
-    HandTcpPoint3D::waypoints_["robotTcp"] = robotTcp_points;
-    const ilqgames_planning::Polyline3 robotTcp_traj(robotTcp_points);
-
-    const std::shared_ptr<ilqgames_planning::QuadraticPolyline3Cost> robotTcp_traj_cost(
-        new ilqgames_planning::QuadraticPolyline3Cost(kRobotTcpLaneCostWeight, robotTcp_traj,
-                                                      {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx}, "robotTcp_traj_cost"));
-
-//    robotTcp_cost.AddStateCost(robotTcp_traj_cost);
+   // robotTcp_cost.AddStateCost(robotTcp_nominalVx_cost);
+   // robotTcp_cost.AddStateCost(robotTcp_nominalVy_cost);
+   // robotTcp_cost.AddStateCost(robotTcp_nominalVz_cost);
 
 
-    // Apply a cost only after a given time instant
-    std::cout << ilqgames::time::kTimeHorizon << std::endl;
+    // // Penalize proximity when below the threshold set by kMinProximity (could also use a constraint).
+    // const std::shared_ptr<ilqgames_planning::ProximityCost3D> humanRobot_proximity_cost(
+    //     new ilqgames_planning::ProximityCost3D(kProximityCostWeight,
+    //                                            {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx},
+    //                                            {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx},
+    //                                            kMinProximity, "proximity_cost"));
 
-    const auto humanHand_finalTraj_cost = std::make_shared<ilqgames::FinalTimeCost>(humanHand_traj_cost,
-        ilqgames::time::kTimeHorizon - kFinalTimeWindow, "humanHand_finalTraj_cost");
+    // humanHand_cost.AddStateCost(humanRobot_proximity_cost);
+    // robotTcp_cost.AddStateCost(humanRobot_proximity_cost);
 
-    humanHand_cost.AddStateCost(humanHand_finalTraj_cost);
 
-    const auto robotTcp_finalTraj_cost = std::make_shared<ilqgames::FinalTimeCost>(robotTcp_traj_cost,
-        ilqgames::time::kTimeHorizon - kFinalTimeWindow, "robotTcp_finalTraj_cost");
+    // // Encourage each player to remain near the given trajectory.
+    // ilqgames_planning::Point3 P0_humanHand = ilqgames_planning::Point3(kHumanHandInitialX, kHumanHandInitialY, kHumanHandInitialZ);
+    // ilqgames_planning::Point3 P0_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX, kRobotTcpInitialY, kRobotTcpInitialZ);
 
-    robotTcp_cost.AddStateCost(robotTcp_finalTraj_cost);
+    // ilqgames_planning::Point3 Pf_humanHand = ilqgames_planning::Point3(kHumanHandTargetX, kHumanHandTargetY, kHumanHandTargetZ);
+    // ilqgames_planning::Point3 Pf_robotTcp = ilqgames_planning::Point3(kRobotTcpTargetX, kRobotTcpTargetY, kRobotTcpTargetZ);
+
+    // ilqgames_planning::Point3 PfP0_humanHand = Pf_humanHand - P0_humanHand;
+    // ilqgames_planning::Point3 random_vector_humanHand = ilqgames_planning::Point3(0.0, 0.0, 1.0);
+    // ilqgames_planning::Point3 orthogonal_vector_humanHand = PfP0_humanHand.cross(random_vector_humanHand);
+
+    // ilqgames_planning::Point3 PfP0_robotTcp = Pf_robotTcp - P0_robotTcp;
+    // ilqgames_planning::Point3 random_vector_robotTcp = ilqgames_planning::Point3(0.0, 0.0, 1.0);
+    // ilqgames_planning::Point3 orthogonal_vector_robotTcp = PfP0_robotTcp.cross(random_vector_robotTcp);
+
+    // // Scale the orthogonal deviation from the straight path from start to finish pos
+    // double scale_factor_humanHand = 0.05;
+    // double scale_factor_robotTcp = 0.1;
+
+    // ilqgames_planning::Point3 P1_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) / 4.0,
+    //                                                                    kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) / 4.0,
+    //                                                                    kHumanHandInitialZ + (kHumanHandTargetZ - kHumanHandInitialZ) / 4.0) +
+    //                                                                    scale_factor_humanHand * orthogonal_vector_humanHand;
+
+    // ilqgames_planning::Point3 P1_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX + (kRobotTcpTargetX - kRobotTcpInitialX) / 4.0,
+    //                                                                   kRobotTcpInitialY + (kRobotTcpTargetY - kRobotTcpInitialY) / 4.0,
+    //                                                                   kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) / 4.0) +
+    //                                                                   scale_factor_robotTcp * orthogonal_vector_robotTcp;
+
+    // ilqgames_planning::Point3 P2_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) / 2.0,
+    //                                                                    kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) / 2.0,
+    //                                                                    kHumanHandInitialZ + (kHumanHandTargetZ - kHumanHandInitialZ) / 2.0) +
+    //                                                                    1.5 * scale_factor_humanHand * orthogonal_vector_humanHand;
+
+    // ilqgames_planning::Point3 P2_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX + (kRobotTcpTargetX - kRobotTcpInitialX) / 2.0,
+    //                                                                   kRobotTcpInitialY + (kRobotTcpTargetY - kRobotTcpInitialY) / 2.0,
+    //                                                                   kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) / 2.0) +
+    //                                                                   1.5 * scale_factor_robotTcp * orthogonal_vector_robotTcp;
+
+    // ilqgames_planning::Point3 P3_humanHand = ilqgames_planning::Point3(kHumanHandInitialX + (kHumanHandTargetX - kHumanHandInitialX) * 3.0 / 4.0,
+    //                                                                    kHumanHandInitialY + (kHumanHandTargetY - kHumanHandInitialY) * 3.0 / 4.0,
+    //                                                                    kHumanHandInitialZ + (kHumanHandTargetZ - kHumanHandInitialZ) * 3.0 / 4.0) +
+    //                                                                    scale_factor_humanHand * orthogonal_vector_humanHand;
+
+    // ilqgames_planning::Point3 P3_robotTcp = ilqgames_planning::Point3(kRobotTcpInitialX + (kRobotTcpTargetX - kRobotTcpInitialX) * 3.0 / 4.0,
+    //                                                                   kRobotTcpInitialY + (kRobotTcpTargetY - kRobotTcpInitialY) * 3.0 / 4.0,
+    //                                                                   kRobotTcpInitialZ + (kRobotTcpTargetZ - kRobotTcpInitialZ) * 3.0 / 4.0) +
+    //                                                                   scale_factor_robotTcp * orthogonal_vector_robotTcp;
+
+    // const PointList3 humanHand_points = {P0_humanHand, P1_humanHand, P2_humanHand, P3_humanHand, Pf_humanHand};
+    // HandTcpPoint3D::waypoints_["humanHand"] = humanHand_points;
+    // const ilqgames_planning::Polyline3 humanHand_traj(humanHand_points);
+
+    // const std::shared_ptr<ilqgames_planning::QuadraticPolyline3Cost> humanHand_traj_cost(
+    //     new ilqgames_planning::QuadraticPolyline3Cost(kHumanHandLaneCostWeight, humanHand_traj,
+    //                                                   {kHumanHandXIdx, kHumanHandYIdx, kHumanHandZIdx}, "humanHand_traj_cost"));
+
+    // humanHand_cost.AddStateCost(humanHand_traj_cost);
+
+    // const PointList3 robotTcp_points = {P0_robotTcp, P1_robotTcp, P2_robotTcp, P3_robotTcp, Pf_robotTcp};
+    // HandTcpPoint3D::waypoints_["robotTcp"] = robotTcp_points;
+    // const ilqgames_planning::Polyline3 robotTcp_traj(robotTcp_points);
+
+    // const std::shared_ptr<ilqgames_planning::QuadraticPolyline3Cost> robotTcp_traj_cost(
+    //     new ilqgames_planning::QuadraticPolyline3Cost(kRobotTcpLaneCostWeight, robotTcp_traj,
+    //                                                   {kRobotTcpXIdx, kRobotTcpYIdx, kRobotTcpZIdx}, "robotTcp_traj_cost"));
+
+    // robotTcp_cost.AddStateCost(robotTcp_traj_cost);
+
+
+    // // Apply the reference trajectory cost only after a given time instant
+    // const auto humanHand_finalTraj_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(humanHand_traj_cost,
+    //                                               kFinalTrajTimeThresh,
+    //                                               "humanHand_finalTraj_cost");
+
+    // humanHand_cost.AddStateCost(humanHand_finalTraj_cost);
+
+    // const auto robotTcp_finalTraj_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(robotTcp_traj_cost,
+    //                                               kFinalTrajTimeThresh,
+    //                                               "robotTcp_finalTraj_cost");
+
+    // robotTcp_cost.AddStateCost(robotTcp_finalTraj_cost);
+
+
+    // // Apply the target position cost only after a given time instant
+    // const auto humanHand_finalGoalX_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(humanHand_goalX_cost,
+    //                                               kFinalGoalTimeThresh,
+    //                                               "humanHand_finalGoalX_cost");
+    // const auto humanHand_finalGoalY_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(humanHand_goalY_cost,
+    //                                               kFinalGoalTimeThresh,
+    //                                               "humanHand_finalGoalY_cost");
+    // const auto humanHand_finalGoalZ_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(humanHand_goalX_cost,
+    //                                               kFinalGoalTimeThresh,
+    //                                               "humanHand_finalGoalZ_cost");
+
+    // humanHand_cost.AddStateCost(humanHand_finalGoalX_cost);
+    // humanHand_cost.AddStateCost(humanHand_finalGoalY_cost);
+    // humanHand_cost.AddStateCost(humanHand_finalGoalZ_cost);
+
+    // const auto robotTcp_finalGoalX_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(robotTcp_goalX_cost,
+    //                                               kFinalGoalTimeThresh,
+    //                                               "robotTcp_finalGoalX_cost");
+    // const auto robotTcp_finalGoalY_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(robotTcp_goalY_cost,
+    //                                               kFinalGoalTimeThresh,
+    //                                               "robotTcp_finalGoalY_cost");
+    // const auto robotTcp_finalGoalZ_cost =
+    //     std::make_shared<ilqgames::FinalTimeCost>(robotTcp_goalZ_cost,
+    //                                               kFinalGoalTimeThresh,
+    //                                               "robotTcp_finalGoalZ_cost");
+
+    // robotTcp_cost.AddStateCost(robotTcp_finalGoalX_cost);
+    // robotTcp_cost.AddStateCost(robotTcp_finalGoalY_cost);
+    // robotTcp_cost.AddStateCost(robotTcp_finalGoalZ_cost);
 
 
     // ===================== TO DO ===================== //
@@ -391,45 +463,53 @@ void HandTcpPoint3D::ConstructPlayerCosts() {
 //                                       !kOrientedRight, "LaneLeftBoundary"));
 
 
-//    // Max/min/nominal speed costs.
-//    const std::shared_ptr<SemiquadraticNormCost> p1_min_v_cost(
-//        new SemiquadraticNormCost(kMaxVCostWeight, {kP1VxIdx, kP1VyIdx}, kMinV,
-//                                  !kOrientedRight, "MinV"));
-//    const std::shared_ptr<SemiquadraticNormCost> p1_max_v_cost(
-//        new SemiquadraticNormCost(kMaxVCostWeight, {kP1VxIdx, kP1VyIdx}, kP1MaxV,
-//                                  kOrientedRight, "MaxV"));
-//    const std::shared_ptr<QuadraticNormCost> p1_nominal_v_cost(
-//        new QuadraticNormCost(kNominalVCostWeight, {kP1VxIdx, kP1VyIdx},
-//                              kP1NominalV, "NominalV"));
-//    p1_cost.AddStateCost(p1_min_v_cost);
-//    p1_cost.AddStateCost(p1_max_v_cost);
-//    p1_cost.AddStateCost(p1_nominal_v_cost);
+    // Max/min/nominal speed costs.
+    // const std::shared_ptr<ilqgames::SemiquadraticNormCost> p1_min_v_cost(
+    //     new ilqgames::SemiquadraticNormCost(kMaxVCostWeight, {kP1VxIdx, kP1VyIdx},
+    //                               kMinV, !kOrientedRight, "MinV"));
+    // const std::shared_ptr<ilqgames::SemiquadraticNormCost> p1_max_v_cost(
+    //     new ilqgames::SemiquadraticNormCost(kMaxVCostWeight, {kP1VxIdx, kP1VyIdx},
+    //                               kP1MaxV, kOrientedRight, "MaxV"));
 
-//    const std::shared_ptr<SemiquadraticNormCost> p2_min_v_cost(
-//        new SemiquadraticNormCost(kMaxVCostWeight, {kP2VxIdx, kP2VyIdx}, kMinV,
-//                                  !kOrientedRight, "MinV"));
-//    const std::shared_ptr<SemiquadraticNormCost> p2_max_v_cost(
-//        new SemiquadraticNormCost(kMaxVCostWeight, {kP2VxIdx, kP2VyIdx}, kP2MaxV,
-//                                  kOrientedRight, "MaxV"));
-//    const std::shared_ptr<QuadraticNormCost> p2_nominal_v_cost(
-//        new QuadraticNormCost(kNominalVCostWeight, {kP2VxIdx, kP2VyIdx},
-//                              kP2NominalV, "NominalV"));
-//    p2_cost.AddStateCost(p2_min_v_cost);
-//    p2_cost.AddStateCost(p2_max_v_cost);
-//    p2_cost.AddStateCost(p2_nominal_v_cost);
+    // humanHand_cost.AddStateCost(p1_min_v_cost);
+    // humanHand_cost.AddStateCost(p1_max_v_cost);
 
-//    const std::shared_ptr<SemiquadraticNormCost> p3_min_v_cost(
-//        new SemiquadraticNormCost(kMaxVCostWeight, {kP3VxIdx, kP3VyIdx}, kMinV,
-//                                  !kOrientedRight, "MinV"));
-//    const std::shared_ptr<SemiquadraticNormCost> p3_max_v_cost(
-//        new SemiquadraticNormCost(kMaxVCostWeight, {kP3VxIdx, kP3VyIdx}, kP3MaxV,
-//                                  kOrientedRight, "MaxV"));
-//    const std::shared_ptr<QuadraticNormCost> p3_nominal_v_cost(
-//        new QuadraticNormCost(kNominalVCostWeight, {kP3VxIdx, kP3VyIdx},
-//                              kP3NominalV, "NominalV"));
-//    p3_cost.AddStateCost(p3_min_v_cost);
-//    p3_cost.AddStateCost(p3_max_v_cost);
-//    p3_cost.AddStateCost(p3_nominal_v_cost);
+    // Min cost on position
+
+    // TO_DO: ADD MIN TO HUMAN HAND
+    const std::shared_ptr<ilqgames::SemiquadraticCost> robotTcp_minX_cost(
+        new ilqgames::SemiquadraticCost(kRobotTcpMinXCostWeight, kRobotTcpXIdx,
+                                        kHumanHandMinXCostWeight, false,
+                                        "robotTcp_minX_cost"));
+    const std::shared_ptr<ilqgames::SemiquadraticCost> robotTcp_minY_cost(
+        new ilqgames::SemiquadraticCost(kRobotTcpMinYCostWeight, kRobotTcpYIdx,
+                                        kHumanHandMinYCostWeight, false,
+                                        "robotTcp_minY_cost"));
+    const std::shared_ptr<ilqgames::SemiquadraticCost> robotTcp_minZ_cost(
+        new ilqgames::SemiquadraticCost(kRobotTcpMinZCostWeight, kRobotTcpZIdx,
+                                        kHumanHandMinZCostWeight, false,
+                                        "robotTcp_minZ_cost"));
+
+    robotTcp_cost.AddStateCost(robotTcp_minX_cost);
+    robotTcp_cost.AddStateCost(robotTcp_minY_cost);
+    robotTcp_cost.AddStateCost(robotTcp_minZ_cost);
+
+    const std::shared_ptr<ilqgames::SemiquadraticCost> robotTcp_maxX_cost(
+        new ilqgames::SemiquadraticCost(kRobotTcpMaxXCostWeight, kRobotTcpXIdx,
+                                        kHumanHandMaxXCostWeight, false,
+                                        "robotTcp_maxX_cost"));
+    const std::shared_ptr<ilqgames::SemiquadraticCost> robotTcp_maxY_cost(
+        new ilqgames::SemiquadraticCost(kRobotTcpMaxYCostWeight, kRobotTcpYIdx,
+                                        kHumanHandMaxYCostWeight, false,
+                                        "robotTcp_maxY_cost"));
+    const std::shared_ptr<ilqgames::SemiquadraticCost> robotTcp_maxZ_cost(
+        new ilqgames::SemiquadraticCost(kRobotTcpMaxZCostWeight, kRobotTcpZIdx,
+                                        kHumanHandMaxZCostWeight, false,
+                                        "robotTcp_maxZ_cost"));
+
+    robotTcp_cost.AddStateCost(robotTcp_maxX_cost);
+    robotTcp_cost.AddStateCost(robotTcp_maxY_cost);
+    robotTcp_cost.AddStateCost(robotTcp_maxZ_cost);
 
 
     // State constraints (???)

@@ -338,4 +338,104 @@ static constexpr float kRobotTcpTargetVz = 0.0;    // m/s
 
 ![target_trajectory_cost](./target_trajectory_cost.png "target_trajectory_cost")
 
-**Agents tend to reach the goal, but keeping close to the reference trajectory, as axpected.**
+**Agents tend to reach the goal, but keeping close to the reference trajectory, as expected.**
+
+# hand_tcp_point3D_receding_finalTimeCost_7
+
+// ===== Cost weights ===== //
+// Target position cost
+static constexpr float kHumanHandGoalXCost = 1.0;
+static constexpr float kHumanHandGoalYCost = 1.0;
+static constexpr float kHumanHandGoalZCost = 1.0;
+
+static constexpr float kRobotTcpGoalXCost = 1.0;
+static constexpr float kRobotTcpGoalYCost = 1.0;
+static constexpr float kRobotTcpGoalZCost = 1.0;
+
+// Target velocity cost
+static constexpr float kHumanHandGoalVxCost = 0.0;
+static constexpr float kHumanHandGoalVyCost = 0.0;
+static constexpr float kHumanHandGoalVzCost = 0.0;
+
+static constexpr float kRobotTcpGoalVxCost = 0.0;
+static constexpr float kRobotTcpGoalVyCost = 0.0;
+static constexpr float kRobotTcpGoalVzCost = 0.0;
+
+// Nominal velocity cost
+static constexpr float kHumanHandNominalVxCost = 1.0;
+static constexpr float kHumanHandNominalVyCost = 1.0;
+static constexpr float kHumanHandNominalVzCost = 1.0;
+
+static constexpr float kRobotTcpNominalVxCost = 1.0;
+static constexpr float kRobotTcpNominalVyCost = 1.0;
+static constexpr float kRobotTcpNominalVzCost = 1.0;
+
+// Control effort (acceleration) cost
+static constexpr float kHumanHandAccXCost = 10.0;
+static constexpr float kHumanHandAccYCost = 10.0;
+static constexpr float kHumanHandAccZCost = 10.0;
+
+static constexpr float kRobotTcpAccXCost = 10.0;
+static constexpr float kRobotTcpAccYCost = 10.0;
+static constexpr float kRobotTcpAccZCost = 10.0;
+
+// Proximity cost
+static constexpr float kProximityCostWeight = 0.0;
+constexpr float kMinProximity = 1.0;  // m (threshold to activate proximity cost)
+
+// Final time cost (can be applied to any cost to activate it after a given elapsed time)
+constexpr float kFinalGoalTimeThresh = 1.5;  // s (threshold to activate final time cost on target state)
+constexpr float  kFinalTrajTimeThresh = 3.0; // s (threshold to activate final time cost on reference traj)
+
+// Reference trajectory cost
+static constexpr float kHumanHandLaneCostWeight = 100.0;
+static constexpr float kRobotTcpLaneCostWeight = 100.0;
+
+// ===== END Cost weights ===== //
+
+// Nominal speed (the sign must be specified!)
+static constexpr float kHumanHandNominalVx = -3.0;    // m/s
+static constexpr float kHumanHandNominalVy = -3.0;    // m/s
+static constexpr float kHumanHandNominalVz = -3.0;    // m/s
+
+static constexpr float kRobotTcpNominalVx = 1.0;     // m/s
+static constexpr float kRobotTcpNominalVy = 1.0;     // m/s
+static constexpr float kRobotTcpNominalVz = 1.0;     // m/s
+
+// Initial state
+static constexpr float kHumanHandInitialX = 10.0;    // m
+static constexpr float kHumanHandInitialY = 10.0;    // m
+static constexpr float kHumanHandInitialZ = 10.0;    // m
+
+static constexpr float kRobotTcpInitialX = -10.0;    // m
+static constexpr float kRobotTcpInitialY = -10.0;    // m
+static constexpr float kRobotTcpInitialZ = -10.0;    // m
+
+static constexpr float kHumanHandInitialVx = 0.0;   // m/s
+static constexpr float kHumanHandInitialVy = 0.0;   // m/s
+static constexpr float kHumanHandInitialVz = 0.0;   // m/s
+
+static constexpr float kRobotTcpInitialVx = 0.0;    // m/s
+static constexpr float kRobotTcpInitialVy = 0.0;    // m/s
+static constexpr float kRobotTcpInitialVz = 0.0;    // m/s
+
+// Target state
+static constexpr float kHumanHandTargetX = -8.0;    // m
+static constexpr float kHumanHandTargetY = -6.0;    // m
+static constexpr float kHumanHandTargetZ = -10.0;    // m
+
+static constexpr float kRobotTcpTargetX = -5.0;      // m
+static constexpr float kRobotTcpTargetY = -5.0;      // m
+static constexpr float kRobotTcpTargetZ = 10.0;      // m
+
+static constexpr float kHumanHandTargetVx = 0.0;   // m/s
+static constexpr float kHumanHandTargetVy = 0.0;   // m/s
+static constexpr float kHumanHandTargetVz = 0.0;   // m/s
+
+static constexpr float kRobotTcpTargetVx = 0.0;    // m/s
+static constexpr float kRobotTcpTargetVy = 0.0;    // m/s
+static constexpr float kRobotTcpTargetVz = 0.0;    // m/s
+
+![final_time_cost](./final_time_cost.png "final_time_cost")
+
+**One can see an abrupt change in the agents' direction after a given time.**

@@ -12,9 +12,7 @@ set(CPP_VERSION 17 CACHE STRING "C++ version to use.")
 if(NOT CMAKE_BUILD_TYPE)
   message("Defaulting to building targets in Debug mode.")
   set(CMAKE_BUILD_TYPE Debug)
-else()
-  message("Building targets in ${CMAKE_BUILD_TYPE} mode.")
-endif(NOT CMAKE_BUILD_TYPE)
+endif()
 
 # Build options.
 option(BUILD_TESTS "Build tests" ON)

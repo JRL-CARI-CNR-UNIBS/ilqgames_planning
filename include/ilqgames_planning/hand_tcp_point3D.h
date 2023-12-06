@@ -18,6 +18,13 @@ class HandTcpPoint3D : public ilqgames::TopDownRenderableProblem {
         void ConstructInitialState();
         void ConstructPlayerCosts();
 
+
+        // Initialize this object.
+        void Initialize(const ilqgames::Time t) {
+          time_horizon_ = t;
+          Problem::Initialize();
+        }
+
         // Unpack x, y, z, vx, vy, vz (for each player, potentially) from a given state
         std::vector<float> Xs(const Eigen::VectorXf& x) const;
         std::vector<float> Ys(const Eigen::VectorXf& x) const;
@@ -32,9 +39,15 @@ class HandTcpPoint3D : public ilqgames::TopDownRenderableProblem {
         // Unpack the list of possible waypoints to pass through for each player
         inline std::map<std::string, std::vector<Point3>> GetWaypoints() const { return waypoints_; };
 
+        inline void SetTimeHorizon(const ilqgames::Time t) { time_horizon_ = t; };
+        inline ilqgames::Time GetTimeHorizon() const { return time_horizon_; };
+
     private:
         // Map to store list of waypoints for each agent
         std::map<std::string, std::vector<Point3>> waypoints_;
+
+        // Time horizon
+        ilqgames::Time time_horizon_ = 10.0;
 
 };  // class HandTcpPoint3D
 

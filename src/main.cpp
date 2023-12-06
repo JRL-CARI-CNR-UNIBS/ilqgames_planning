@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
     params.linesearch = true;
     params.initial_alpha_scaling = 0.98;
     params.geometric_alpha_scaling = 0.01;
-    params.max_backtracking_steps = 500;
+    params.max_backtracking_steps = 1000;
     params.expected_decrease_fraction = 0.1;
 
     // Whether solver should shoot for an open loop or feedback Nash.
@@ -93,15 +93,15 @@ int main(int argc, char **argv) {
     params.reset_mu = true;
 
     // Receding horizon parameters
-    constexpr ilqgames::Time kFinalTime = 5.0;       // DEFAULT: 10.0 s
-    constexpr ilqgames::Time kPlannerRuntime = 0.75;  // DEFAULT: 0.25 s
-    constexpr ilqgames::Time kExtraTime = 0.05;       // DEFAULT: 0.25 s
+    constexpr ilqgames::Time kFinalTime = 10.0;       // DEFAULT: 10.0 s
+    constexpr ilqgames::Time kPlannerRuntime = 0.25;  // DEFAULT: 0.25 s
+    constexpr ilqgames::Time kExtraTime = 0.25;       // DEFAULT: 0.25 s
 
     // === END Set ilqgames solver parameters === //
 
     // Solve for feedback equilibrium
     auto problem = std::make_shared<ilqgames_planning::HandTcpPoint3D>();
-    problem->Initialize();
+    problem->Initialize(kFinalTime);
     LOG(INFO) << "Is the problem constrained? " << (problem->IsConstrained() ? "YES" : "NO");
     ilqgames::AugmentedLagrangianSolver solver(problem, params);
 
