@@ -7,8 +7,9 @@ message("Project Version: " ${${PROJECT_NAME}_VERSION})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 set(CPP_VERSION 17 CACHE STRING "C++ version to use.")
+set(CMAKE_CXX_STANDARD ${CPP_VERSION})
 
-# Set the build type. Default to Release mode.
+# Set the build type. Default to Debug mode.
 if(NOT CMAKE_BUILD_TYPE)
   message("Defaulting to building targets in Debug mode.")
   set(CMAKE_BUILD_TYPE Debug)
@@ -38,16 +39,10 @@ target_include_directories(${PROJECT_NAME}_main PUBLIC ${CMAKE_SOURCE_DIR}/inclu
 
 # Link ${PROJECT_NAME} library to ${PROJECT_NAME}_main
 target_link_libraries(${PROJECT_NAME}_main ${PROJECT_NAME})
-set_property(TARGET ${PROJECT_NAME}_main PROPERTY CXX_STANDARD ${CPP_VERSION})
+# set_property(TARGET ${PROJECT_NAME}_main PROPERTY CXX_STANDARD ${CPP_VERSION})
 
 
 # === EXTERNAL DEPENDENCIES === #
-# ilqgames
-find_package(ilqgames REQUIRED)
-target_link_libraries(${PROJECT_NAME} ${ilqgames_LIBRARIES})
-get_target_property(DEFS ilqgames INTERFACE_COMPILE_DEFINITIONS)
-message("ILQGAMES logging directory: " ${DEFS})
-
 # Eigen
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
@@ -55,6 +50,17 @@ include_directories(SYSTEM ${EIGEN3_INCLUDE_DIR})
 # rdyn_core
 find_package(rdyn_core REQUIRED)
 include_directories(SYSTEM ${RDYN_CORE_INCLUDE_DIR})
+
+# ilqgames
+find_package(ilqgames REQUIRED)
+set_target_properties(ilqgames PROPERTIES
+                      INTERFACE_COMPILE_DEFINITIONS "ILQGAMES_LOG_DIR=\"${CMAKE_SOURCE_DIR}/logs\"")
+get_target_property(DEFS ilqgames INTERFACE_COMPILE_DEFINITIONS)
+message("\nILQGAMES logging directory: " ${DEFS} "\n")
+
+target_link_libraries(${PROJECT_NAME} ${ilqgames_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ilqgames_INCLUDE_DIRS})
+
 
 # === BUILD TESTS === #
 if (BUILD_TESTS)

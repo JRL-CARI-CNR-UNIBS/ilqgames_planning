@@ -1,7 +1,7 @@
 #include <ilqgames/cost/time_invariant_cost.h>
 
-#ifndef PROXIMITY_COST_3D_H
-#define PROXIMITY_COST_3D_H
+#ifndef ILQGAMES_PLANNING_PROXIMITY_COST_3D_H
+#define ILQGAMES_PLANNING_PROXIMITY_COST_3D_H
 
 namespace ilqgames_planning {
 

@@ -46,6 +46,9 @@ Point3 Polyline3::PointAt(float route_pos, bool* is_vertex,
 
   // Walk along this line segment the remaining distance.
   const float remaining = route_pos - cumulative_lengths_[idx];
+  // LOG(INFO) << "Desired route pos: " << route_pos << std::endl;
+  // LOG(INFO) << "Cumulative lengths: " << cumulative_lengths_[idx] << std::endl;
+  // LOG(INFO) << "Remaining: " << remaining;
   CHECK_GE(remaining, 0.0);
 
   if (is_vertex) {

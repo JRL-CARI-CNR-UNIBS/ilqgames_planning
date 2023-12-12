@@ -14,12 +14,12 @@ BASE_DIRECTORY = base_dir
 LOG_DIRECTORY = BASE_DIRECTORY + "/logs/"
 WAYPTS_DIRECTORY = BASE_DIRECTORY + "/waypoints/"
 EXAMPLE_LOGDIR = "hand_tcp_point3D_50" # to test single iteration
-EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_8" # to test full trajectory along receding horizon
+EXAMPLE_LOGDIR_RECEDING = "hand_tcp_point3D_receding_9" # to test full trajectory along receding horizon
 SAMPLING_TIME = 0.1 # [s]
 N_STATES_PER_AGENT = 6
 N_AGENTS = 2
 RECEDING_HORIZON = True
-REFERENCE_TRAJECTORY = False
+REFERENCE_TRAJECTORY = True
 
 
 def parse_txt(filename):

@@ -51,7 +51,7 @@
 #include <ilqgames/solver/solution_splicer.h>
 #include <ilqgames/utils/solver_log.h>
 #include <ilqgames/utils/strategy.h>
-#include <ilqgames/utils/types.h>
+#include <ilqgames_planning/types.h>
 
 #include <glog/logging.h>
 #include <chrono>
@@ -73,6 +73,7 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
   // integrate dynamics forward.
   auto solver_call_time = clock::now();
   bool success = false;
+  VLOG(1) << "Receding Horizon Initial Problem: Solving... ";
   logs.push_back(solver->Solve(&success));
   CHECK(success);
   ilqgames::Time elapsed_time =
@@ -96,6 +97,8 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
       // Integrate a little more.
       t += extra_time;  // + planner_runtime;
 
+      VLOG(1) << "Receding Horizon Iter " << iter << " | t = " << t << ". Solving... ";
+
       if (t >= final_time ||
           !splicer.ContainsTime(t + planner_runtime + ilqgames::time::kTimeStep))
         break;
@@ -118,7 +121,7 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
 
       CHECK_LE(elapsed_time, planner_runtime);
       iter++;
-      VLOG(1) << "iter " << iter << " | t = " << t << ": Solved warm-started problem in "
+      VLOG_ERROR(1) << "Receding Horizon Iter " << iter << " | t = " << t << ": Solved warm-started problem in "
               << elapsed_time << " seconds.";
 
       // Break the loop if it's been long enough.

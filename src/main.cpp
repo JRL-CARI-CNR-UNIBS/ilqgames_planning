@@ -200,7 +200,8 @@ int main(int argc, char **argv) {
     }
 
     // Log the polyline used as reference trajectory in the current experiment
-    log_polyline(problem, log_dir);
+    if(problem->HasWaypoints())
+        log_polyline(problem, log_dir);
 
     return 0;
 }

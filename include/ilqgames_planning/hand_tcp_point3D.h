@@ -41,8 +41,11 @@ class HandTcpPoint3D : public ilqgames::TopDownRenderableProblem {
 
         inline void SetTimeHorizon(const ilqgames::Time t) { time_horizon_ = t; };
         inline ilqgames::Time GetTimeHorizon() const { return time_horizon_; };
+        inline bool HasWaypoints() const { return has_waypoints_; };
 
     private:
+        bool has_waypoints_ = false;
+
         // Map to store list of waypoints for each agent
         std::map<std::string, std::vector<Point3>> waypoints_;
 
