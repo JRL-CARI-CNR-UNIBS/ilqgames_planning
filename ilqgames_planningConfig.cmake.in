@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+
+get_filename_component(ilqgames_planning_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+
+find_dependency(Eigen3      REQUIRED)
+find_dependency(gflags      REQUIRED)
+find_dependency(ilqgames    REQUIRED)
+find_dependency(rdyn_core   REQUIRED)
+
+include("${ilqgames_planning_CMAKE_DIR}/ilqgames_planningTargets.cmake")
+
+set(ilqgames_planning_FOUND TRUE)
+
+set(ilqgames_planning_LIBRARIES ilqgames_planning)
+
+check_required_components(ilqgames_planning)

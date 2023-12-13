@@ -73,13 +73,13 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
   // integrate dynamics forward.
   auto solver_call_time = clock::now();
   bool success = false;
-  VLOG(1) << "Receding Horizon Initial Problem: Solving... ";
+  VLOG_ERROR(1) << "Receding Horizon Initial Problem: Solving... ";
   logs.push_back(solver->Solve(&success));
   CHECK(success);
   ilqgames::Time elapsed_time =
       std::chrono::duration<ilqgames::Time>(clock::now() - solver_call_time).count();
 
-  VLOG(1) << "Solved initial problem in " << elapsed_time << " seconds, with "
+  VLOG_ERROR(1) << "Solved initial problem in " << elapsed_time << " seconds, with "
           << logs.back()->NumIterates() << " iterations.";
   const auto& dynamics = solver->GetProblem().Dynamics();
 
@@ -97,11 +97,14 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
       // Integrate a little more.
       t += extra_time;  // + planner_runtime;
 
-      VLOG(1) << "Receding Horizon Iter " << iter << " | t = " << t << ". Solving... ";
+      VLOG_ERROR(1) << "Receding Horizon Iter " << iter << " | t = " << t << ". Solving... ";
 
       if (t >= final_time ||
-          !splicer.ContainsTime(t + planner_runtime + ilqgames::time::kTimeStep))
-        break;
+          !splicer.ContainsTime(t + planner_runtime + ilqgames::time::kTimeStep)) {
+          VLOG_ERROR(1) << "Receding Horizon Iter " << iter << " | t = " << t
+                        << ": Reached final time. Breaking.";
+          break;
+      }
 
       x = solver->GetProblem().Dynamics()->Integrate(
           t - extra_time, t, x, splicer.CurrentOperatingPoint(),
@@ -119,14 +122,19 @@ std::vector<std::shared_ptr<const ilqgames::SolverLog>> RecedingHorizonSimulator
       elapsed_time =
           std::chrono::duration<ilqgames::Time>(clock::now() - solver_call_time).count();
 
+      VLOG_ERROR(1) << "Receding Horizon Iter " << iter << " | t = " << t
+                    << ": Solved warm-started problem in " << elapsed_time << " seconds.";
+
       CHECK_LE(elapsed_time, planner_runtime);
       iter++;
-      VLOG_ERROR(1) << "Receding Horizon Iter " << iter << " | t = " << t << ": Solved warm-started problem in "
-              << elapsed_time << " seconds.";
 
       // Break the loop if it's been long enough.
       t += elapsed_time;
-      if (t >= final_time || !splicer.ContainsTime(t)) break;
+      if (t >= final_time || !splicer.ContainsTime(t)) {
+          VLOG_ERROR(1) << "Receding Horizon Iter " << iter << " | t = " << t
+                        << ": Reached final time. Breaking.";
+          break;
+      }
 
       // Integrate dynamics forward to account for solve time.
       x = solver->GetProblem().Dynamics()->Integrate(

@@ -1,11 +1,10 @@
 # If testing is enabled, build all tests.
 if (BUILD_TESTS)
-
   enable_testing()
+  find_package(GTest REQUIRED)
 
   # Set the local gtest include directory.
-  set(GTEST_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/external/gtest")
-  include_directories(${gtest_SOURCE_DIR} ${gtest_SOURCE_DIR}/include)
+  include_directories(${GTEST_INCLUDE_DIRS})
 
   # Gtest bug fix.
   add_definitions(-DGTEST_HAS_TR1_TUPLE=0)

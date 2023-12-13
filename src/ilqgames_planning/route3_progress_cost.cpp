@@ -10,20 +10,22 @@
 namespace ilqgames_planning {
 
 float Route3ProgressCost::Evaluate(Time t, const VectorXf& input) const {
-    LOG(INFO) << "Evaluating route progress cost at time " << t << std::endl;
-
     CHECK_LT(xidx_, input.size());
     CHECK_LT(yidx_, input.size());
     CHECK_LT(zidx_, input.size());
 
-    const float desired_route_pos =
-        initial_route_pos_ + (t - initial_time_) * nominal_speed_;
+    // const float desired_route_pos =
+    //     initial_route_pos_ + (t - initial_time_) * nominal_speed_;
+    const float desired_route_pos = initial_route_pos_ + t * nominal_speed_;
     const Point3 desired = polyline_.PointAt(desired_route_pos, nullptr, nullptr);
 
     const float dx = input(xidx_) - desired.x();
     const float dy = input(yidx_) - desired.y();
     const float dz = input(zidx_) - desired.z();
-    return 0.5 * weight_ * (dx * dx + dy * dy + dz * dz);
+
+    float cost = 0.5 * weight_ * (dx * dx + dy * dy + dz * dz);
+    LOG(INFO) << "Route progress cost: " << cost << std::endl;
+    return cost;
 }
 
 void Route3ProgressCost::Quadraticize(Time t, const VectorXf& input,
@@ -40,8 +42,9 @@ void Route3ProgressCost::Quadraticize(Time t, const VectorXf& input,
 
     // Unpack current position and find closest point / segment.
     const Point3 current_position(input(xidx_), input(yidx_), input(zidx_));
-    const float desired_route_pos =
-        initial_route_pos_ + (t - initial_time_) * nominal_speed_;
+    // const float desired_route_pos =
+    //     initial_route_pos_ + (t - initial_time_) * nominal_speed_;
+    const float desired_route_pos = initial_route_pos_ + t * nominal_speed_;
 
     bool is_endpoint;
     const Point3 route_point =
