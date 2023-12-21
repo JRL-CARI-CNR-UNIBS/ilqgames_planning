@@ -2,9 +2,7 @@
 if (BUILD_TESTS)
   enable_testing()
   find_package(GTest REQUIRED)
-
-  # Set the local gtest include directory.
-  include_directories(${GTEST_INCLUDE_DIRS})
+  unset(GTest_DIR CACHE) # Prevents ccmake from displaying this variable (which is empty anyway).
 
   # Gtest bug fix.
   add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
